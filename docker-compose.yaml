@@ -14,7 +14,7 @@ services:
       timeout: 3s
       retries: 120
     ports:
-      - $DB_HOST:5432
+      - $DB_PORT:5432
     networks:
       - net
 
