@@ -9,7 +9,7 @@ class SubscriberCallAdmin(admin.ModelAdmin):
         "receiver__last_name__startswith",
     )
 
-    list_per_page = 30
+    list_per_page = 25
     list_display = ("caller", "receiver", "start", "duration")
     list_display_links = ("caller", "receiver")
 

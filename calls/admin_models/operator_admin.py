@@ -3,7 +3,7 @@ from django.contrib import admin
 from calls.models import OperatorSubscriber
 
 
-class SubscriberInline(admin.TabularInline):
+class SubscribersInlineAdmin(admin.StackedInline):
     model = OperatorSubscriber
     fields = ("subscriber",)
     extra = 1
@@ -15,7 +15,7 @@ class OperatorAdmin(admin.ModelAdmin):
     list_per_page = 25
     list_display = ("title", "foundation_date")
 
-    inlines = (SubscriberInline,)
+    inlines = (SubscribersInlineAdmin,)
 
     fieldsets = (
         (

@@ -15,9 +15,6 @@ INCORRECT_PASSPORT_MESSAGE = "Incorrect passport number format"
 
 
 class Subscriber(UuidMixin, CreatedMixin, UpdatedMixin, models.Model):
-    class Meta:
-        ordering = ["first_name", "last_name", "birth_date"]
-
     first_name = models.CharField(max_length=FIRST_NAME_MAX_LENGTH)
     last_name = models.CharField(max_length=LAST_NAME_MAX_LENGTH)
     full_name: str = models.GeneratedField(  # type: ignore
@@ -34,5 +31,15 @@ class Subscriber(UuidMixin, CreatedMixin, UpdatedMixin, models.Model):
         unique=True,
     )
 
+    operators = models.ManyToManyField(
+        "Operator",
+        blank=True,
+        through="OperatorSubscriber",
+        related_name="+",
+    )
+
     def __str__(self) -> str:
         return self.full_name
+
+    class Meta:
+        ordering = ["first_name", "last_name", "birth_date"]
