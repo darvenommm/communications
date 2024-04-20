@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from os import getenv
 from pathlib import Path
 
+from django.utils.translation import gettext_lazy as _
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -126,8 +128,8 @@ TIME_ZONE = "Europe/Moscow"
 USE_I18N = True
 
 LANGUAGES = (
-    ("en", "English"),
-    ("ru", "Russian"),
+    ("en", _("English")),
+    ("ru", _("Russian")),
 )
 
 USE_TZ = True

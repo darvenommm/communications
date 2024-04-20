@@ -13,6 +13,8 @@ services:
       interval: 2s
       timeout: 3s
       retries: 120
+    volumes:
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
     ports:
       - $DB_PORT:5432
     networks:

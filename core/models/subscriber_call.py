@@ -29,6 +29,7 @@ class SubscriberCall(UuidMixin, CreatedMixin, UpdatedMixin, models.Model):
     class Meta:
         verbose_name = _("subscriber call")
         verbose_name_plural = _("subscribers calls")
+        db_table = '"mobile_communications"."subscriber_call"'
         ordering = ["start", "caller__full_name", "receiver__full_name"]
         constraints = (
             models.CheckConstraint(

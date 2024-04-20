@@ -26,4 +26,5 @@ class Operator(UuidMixin, CreatedMixin, UpdatedMixin, models.Model):
     class Meta:
         verbose_name = _("mobile operator")
         verbose_name_plural = _("mobile operators")
+        db_table = '"mobile_communications"."operator"'
         ordering = ["title", "foundation_date"]
