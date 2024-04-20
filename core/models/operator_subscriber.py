@@ -13,6 +13,6 @@ class OperatorSubscriber(UuidMixin, models.Model):
 
     class Meta:
         verbose_name = _("relation of operator and subscriber")
-        verbose_name = _("relations of operator and subscriber")
+        verbose_name_plural = _("relations of operator and subscriber")
         db_table = '"mobile_communications"."operator_subscriber"'
         unique_together = ("operator", "subscriber")

@@ -8,11 +8,12 @@ from core.models.functions import ConcatString
 
 FIRST_NAME_MAX_LENGTH = 64
 LAST_NAME_MAX_LENGTH = 64
-PASSPORT_MAX_LENGTH = 10
+PASSPORT_MAX_LENGTH = 11
 
-PASSPORT_REGEX = r"^\d{%s}$" % PASSPORT_MAX_LENGTH
+PASSPORT_REGEX = r"^\d{4}-\d{6}$"
 
-INCORRECT_PASSPORT_MESSAGE = _("incorrect passport number format")
+INCORRECT_PASSPORT_MESSAGE = _('incorrect passport number format (example: "0000-000000")')
+PASSPORT_HELP_TEXT = _('Passport number has a format like "0000-000000"')
 
 
 class Subscriber(UuidMixin, CreatedMixin, UpdatedMixin, models.Model):
@@ -31,6 +32,7 @@ class Subscriber(UuidMixin, CreatedMixin, UpdatedMixin, models.Model):
         max_length=PASSPORT_MAX_LENGTH,
         validators=[RegexValidator(PASSPORT_REGEX, INCORRECT_PASSPORT_MESSAGE)],
         unique=True,
+        help_text=PASSPORT_HELP_TEXT,
     )
 
     operators = models.ManyToManyField(
