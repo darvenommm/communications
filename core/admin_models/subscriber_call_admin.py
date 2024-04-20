@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.translation import gettext_lazy as _
 
 
 class SubscriberCallAdmin(admin.ModelAdmin):
@@ -15,7 +16,7 @@ class SubscriberCallAdmin(admin.ModelAdmin):
 
     fieldsets = (
         (
-            "Subscriber call fields",
+            _("subscriber call fields"),
             {
                 "fields": ("caller", "receiver", "start", "duration"),
             },

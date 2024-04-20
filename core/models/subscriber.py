@@ -1,8 +1,9 @@
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 from django.core.validators import RegexValidator
 
-from calls.models.mixins import UuidMixin, CreatedMixin, UpdatedMixin
-from calls.models.functions import ConcatString
+from core.models.mixins import UuidMixin, CreatedMixin, UpdatedMixin
+from core.models.functions import ConcatString
 
 
 FIRST_NAME_MAX_LENGTH = 64
@@ -11,12 +12,12 @@ PASSPORT_MAX_LENGTH = 10
 
 PASSPORT_REGEX = r"^\d{%s}$" % PASSPORT_MAX_LENGTH
 
-INCORRECT_PASSPORT_MESSAGE = "Incorrect passport number format"
+INCORRECT_PASSPORT_MESSAGE = _("incorrect passport number format")
 
 
 class Subscriber(UuidMixin, CreatedMixin, UpdatedMixin, models.Model):
-    first_name = models.CharField(max_length=FIRST_NAME_MAX_LENGTH)
-    last_name = models.CharField(max_length=LAST_NAME_MAX_LENGTH)
+    first_name = models.CharField(_("first name"), max_length=FIRST_NAME_MAX_LENGTH)
+    last_name = models.CharField(_("last name"), max_length=LAST_NAME_MAX_LENGTH)
     full_name: str = models.GeneratedField(  # type: ignore
         expression=ConcatString("first_name", models.Value(" "), "last_name"),
         output_field=models.CharField(
@@ -24,8 +25,9 @@ class Subscriber(UuidMixin, CreatedMixin, UpdatedMixin, models.Model):
         ),
         db_persist=True,
     )
-    birth_date = models.DateField()
+    birth_date = models.DateField(_("birth day"))
     passport = models.CharField(
+        _("passport number"),
         max_length=PASSPORT_MAX_LENGTH,
         validators=[RegexValidator(PASSPORT_REGEX, INCORRECT_PASSPORT_MESSAGE)],
         unique=True,
@@ -36,10 +38,13 @@ class Subscriber(UuidMixin, CreatedMixin, UpdatedMixin, models.Model):
         blank=True,
         through="OperatorSubscriber",
         related_name="+",
+        verbose_name=_("operators"),
     )
 
     def __str__(self) -> str:
         return self.full_name
 
     class Meta:
+        verbose_name = _("subscriber")
+        verbose_name_plural = _("subscribers")
         ordering = ["first_name", "last_name", "birth_date"]

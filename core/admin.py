@@ -1,7 +1,7 @@
 from django.contrib import admin
 
-from calls.models import Operator, Subscriber, SubscriberCall, OperatorSubscriber
-from calls.admin_models import (
+from core.models import Operator, Subscriber, SubscriberCall, OperatorSubscriber
+from core.admin_models import (
     OperatorAdmin,
     SubscriberAdmin,
     SubscriberCallAdmin,

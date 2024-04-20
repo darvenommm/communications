@@ -1,6 +1,7 @@
 from django.contrib import admin
+from django.utils.translation import gettext_lazy as _
 
-from calls.models import OperatorSubscriber
+from core.models import OperatorSubscriber
 
 
 class OperatorInline(admin.StackedInline):
@@ -21,7 +22,7 @@ class SubscriberAdmin(admin.ModelAdmin):
 
     fieldsets = (
         (
-            "Subscriber fields",
+            _("subscriber fields"),
             {
                 "fields": ("first_name", "last_name", "birth_date", "passport"),
             },

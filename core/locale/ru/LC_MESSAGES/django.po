@@ -1,0 +1,134 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-04-20 19:40+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
+"(n%100>=11 && n%100<=14)? 2 : 3);\n"
+
+#: core/admin_models/operator_admin.py:23
+msgid "operator fields"
+msgstr "поля оператора"
+
+#: core/admin_models/operator_subscriber_admin.py:14
+msgid "operator - subscriber fields"
+msgstr "поля оператор - абонент"
+
+#: core/admin_models/subscriber_admin.py:25
+msgid "subscriber fields"
+msgstr "поля абонента"
+
+#: core/admin_models/subscriber_call_admin.py:19
+msgid "subscriber call fields"
+msgstr "поля звонка абонента"
+
+#: core/apps.py:8
+msgid "mobile communication"
+msgstr "мобильная связь"
+
+#: core/models/operator.py:11
+msgid "title"
+msgstr "заголовок"
+
+#: core/models/operator.py:12
+msgid "description"
+msgstr "описание"
+
+#: core/models/operator.py:13
+msgid "foundation date"
+msgstr "дата основания"
+
+#: core/models/operator.py:20 core/models/subscriber.py:49
+msgid "subscribers"
+msgstr "абоненты"
+
+#: core/models/operator.py:27
+msgid "mobile operator"
+msgstr "мобильный оператор"
+
+#: core/models/operator.py:28
+msgid "mobile operators"
+msgstr "мобильные операторы"
+
+#: core/models/operator_subscriber.py:8
+msgid "operator"
+msgstr "оператор"
+
+#: core/models/operator_subscriber.py:9 core/models/subscriber.py:48
+msgid "subscriber"
+msgstr "абонент"
+
+#: core/models/operator_subscriber.py:15
+msgid "relation of operator and subscriber"
+msgstr "связь оператор и абонент"
+
+#: core/models/operator_subscriber.py:16
+msgid "relations of operator and subscriber"
+msgstr "связи оператора и абонента"
+
+#: core/models/subscriber.py:15
+msgid "incorrect passport number format"
+msgstr "неправильный формат паспортного номера"
+
+#: core/models/subscriber.py:19
+msgid "first name"
+msgstr "имя"
+
+#: core/models/subscriber.py:20
+msgid "last name"
+msgstr "фамилия"
+
+#: core/models/subscriber.py:28
+msgid "birth day"
+msgstr "день рождения"
+
+#: core/models/subscriber.py:30
+msgid "passport number"
+msgstr "номер паспорта"
+
+#: core/models/subscriber.py:41
+msgid "operators"
+msgstr "операторы"
+
+#: core/models/subscriber_call.py:12
+msgid "caller"
+msgstr "звонящий"
+
+#: core/models/subscriber_call.py:18
+msgid "call receiver"
+msgstr "получатель звонка"
+
+#: core/models/subscriber_call.py:20
+msgid "start time"
+msgstr "время начала"
+
+#: core/models/subscriber_call.py:21
+msgid "duration"
+msgstr "длительность"
+
+#: core/models/subscriber_call.py:24
+#, python-format
+msgid "call from %(caller_full_name)s to %(receiver_full_name)s"
+msgstr "звонок от %(caller_full_name)s к %(receiver_full_name)s"
+
+#: core/models/subscriber_call.py:30
+msgid "subscriber call"
+msgstr "звонок абонента"
+
+#: core/models/subscriber_call.py:31
+msgid "subscribers calls"
+msgstr "звонки абонентов"
