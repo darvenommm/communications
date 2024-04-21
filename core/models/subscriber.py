@@ -50,4 +50,4 @@ class Subscriber(UuidMixin, CreatedMixin, UpdatedMixin, models.Model):
         verbose_name = _("subscriber")
         verbose_name_plural = _("subscribers")
         db_table = '"mobile_communications"."subscriber"'
-        ordering = ["first_name", "last_name", "birth_date"]
+        ordering = ("first_name", "last_name", "birth_date")

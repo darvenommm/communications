@@ -30,7 +30,7 @@ class SubscriberCall(UuidMixin, CreatedMixin, UpdatedMixin, models.Model):
         verbose_name = _("subscriber call")
         verbose_name_plural = _("subscribers calls")
         db_table = '"mobile_communications"."subscriber_call"'
-        ordering = ["start", "caller__full_name", "receiver__full_name"]
+        ordering = ("start", "caller__full_name", "receiver__full_name")
         constraints = (
             models.CheckConstraint(
                 check=~models.Q(caller_id=models.F("receiver_id")),  # not equal
