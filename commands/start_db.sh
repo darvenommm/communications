@@ -1,1 +1,1 @@
-docker start mobile_communications-database-1
+docker start communications-database-1

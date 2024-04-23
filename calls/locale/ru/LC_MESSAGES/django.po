@@ -1,0 +1,134 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-04-24 01:03+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
+"(n%100>=11 && n%100<=14)? 2 : 3);\n"
+
+#: calls/admin_models/operator_admin.py:23
+msgid "operator fields"
+msgstr "поля оператора"
+
+#: calls/admin_models/operator_subscriber_admin.py:14
+msgid "operator - subscriber fields"
+msgstr "поля оператор - абонент"
+
+#: calls/admin_models/subscriber_admin.py:25
+msgid "user"
+msgstr "пользователь"
+
+#: calls/admin_models/subscriber_admin.py:31
+msgid "subscriber fields"
+msgstr "поля абонента"
+
+#: calls/admin_models/subscriber_call_admin.py:19
+msgid "subscriber call fields"
+msgstr "поля звонка абонента"
+
+#: calls/apps.py:8
+msgid "communication via calls"
+msgstr "связь через звонки"
+
+#: calls/models/operator.py:12
+msgid "title"
+msgstr "заголовок"
+
+#: calls/models/operator.py:13
+msgid "foundation date"
+msgstr "дата основания"
+
+#: calls/models/operator.py:15
+msgid "description"
+msgstr "описание"
+
+#: calls/models/operator.py:26 calls/models/subscriber.py:52
+msgid "subscribers"
+msgstr "абоненты"
+
+#: calls/models/operator.py:33
+msgid "mobile operator"
+msgstr "мобильный оператор"
+
+#: calls/models/operator.py:34
+msgid "mobile operators"
+msgstr "мобильные операторы"
+
+#: calls/models/operator_subscriber.py:11
+msgid "operator"
+msgstr "оператор"
+
+#: calls/models/operator_subscriber.py:12 calls/models/subscriber.py:51
+msgid "subscriber"
+msgstr "абонент"
+
+#: calls/models/operator_subscriber.py:18
+msgid "relation of operator and subscriber"
+msgstr "связь оператор и абонент"
+
+#: calls/models/operator_subscriber.py:19
+msgid "relations of operator and subscriber"
+msgstr "связи оператора и абонента"
+
+#: calls/models/subscriber.py:15
+msgid "incorrect passport number format (example: \"0000-000000\")"
+msgstr "Неправильный формат паспортного номера (Пример: \"0000-000000\")"
+
+#: calls/models/subscriber.py:16
+msgid "Passport number has a format like \"0000-000000\""
+msgstr "Формат паспортного номера - \"0000-000000\""
+
+#: calls/models/subscriber.py:31
+msgid "passport number"
+msgstr "номер паспорта"
+
+#: calls/models/subscriber.py:37
+msgid "birth day"
+msgstr "день рождения"
+
+#: calls/models/subscriber.py:44
+msgid "operators"
+msgstr "операторы"
+
+#: calls/models/subscriber_call.py:13
+msgid "caller"
+msgstr "звонящий"
+
+#: calls/models/subscriber_call.py:19
+msgid "call receiver"
+msgstr "получатель звонка"
+
+#: calls/models/subscriber_call.py:21
+msgid "start time"
+msgstr "время начала"
+
+#: calls/models/subscriber_call.py:22
+msgid "duration"
+msgstr "длительность"
+
+#: calls/models/subscriber_call.py:25
+#, python-format
+msgid "call from %(caller_full_name)s to %(receiver_full_name)s"
+msgstr "звонок от %(caller_full_name)s к %(receiver_full_name)s"
+
+#: calls/models/subscriber_call.py:31
+msgid "subscriber call"
+msgstr "звонок абонента"
+
+#: calls/models/subscriber_call.py:32
+msgid "subscribers calls"
+msgstr "звонки абонентов"
