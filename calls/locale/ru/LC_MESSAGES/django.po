@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-24 01:03+0300\n"
+"POT-Creation-Date: 2024-04-24 15:04+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -56,7 +56,7 @@ msgstr "дата основания"
 msgid "description"
 msgstr "описание"
 
-#: calls/models/operator.py:26 calls/models/subscriber.py:52
+#: calls/models/operator.py:26 calls/models/subscriber.py:57
 msgid "subscribers"
 msgstr "абоненты"
 
@@ -72,7 +72,7 @@ msgstr "мобильные операторы"
 msgid "operator"
 msgstr "оператор"
 
-#: calls/models/operator_subscriber.py:12 calls/models/subscriber.py:51
+#: calls/models/operator_subscriber.py:12 calls/models/subscriber.py:56
 msgid "subscriber"
 msgstr "абонент"
 
@@ -84,51 +84,61 @@ msgstr "связь оператор и абонент"
 msgid "relations of operator and subscriber"
 msgstr "связи оператора и абонента"
 
-#: calls/models/subscriber.py:15
+#: calls/models/subscriber.py:17
 msgid "incorrect passport number format (example: \"0000-000000\")"
 msgstr "Неправильный формат паспортного номера (Пример: \"0000-000000\")"
 
-#: calls/models/subscriber.py:16
+#: calls/models/subscriber.py:18
 msgid "Passport number has a format like \"0000-000000\""
 msgstr "Формат паспортного номера - \"0000-000000\""
 
-#: calls/models/subscriber.py:31
+#: calls/models/subscriber.py:33
 msgid "passport number"
 msgstr "номер паспорта"
 
-#: calls/models/subscriber.py:37
+#: calls/models/subscriber.py:40
 msgid "birth day"
 msgstr "день рождения"
 
-#: calls/models/subscriber.py:44
+#: calls/models/subscriber.py:49
 msgid "operators"
 msgstr "операторы"
 
-#: calls/models/subscriber_call.py:13
+#: calls/models/subscriber_call.py:14
 msgid "caller"
 msgstr "звонящий"
 
-#: calls/models/subscriber_call.py:19
+#: calls/models/subscriber_call.py:20
 msgid "call receiver"
 msgstr "получатель звонка"
 
-#: calls/models/subscriber_call.py:21
+#: calls/models/subscriber_call.py:22
 msgid "start time"
 msgstr "время начала"
 
-#: calls/models/subscriber_call.py:22
+#: calls/models/subscriber_call.py:23
 msgid "duration"
 msgstr "длительность"
 
-#: calls/models/subscriber_call.py:25
+#: calls/models/subscriber_call.py:26
 #, python-format
 msgid "call from %(caller_full_name)s to %(receiver_full_name)s"
 msgstr "звонок от %(caller_full_name)s к %(receiver_full_name)s"
 
-#: calls/models/subscriber_call.py:31
+#: calls/models/subscriber_call.py:32
 msgid "subscriber call"
 msgstr "звонок абонента"
 
-#: calls/models/subscriber_call.py:32
+#: calls/models/subscriber_call.py:33
 msgid "subscribers calls"
 msgstr "звонки абонентов"
+
+#: calls/models/validators/date_range_validator.py:26
+#, python-format
+msgid "Given time should be after %(start)s!"
+msgstr "Переданноe время должно быть после %(start)s!"
+
+#: calls/models/validators/date_range_validator.py:30
+#, python-format
+msgid "Given time should be before %(end)s!"
+msgstr "Переданноe время должно быть до %(end)s!"

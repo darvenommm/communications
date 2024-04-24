@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from .mixins import UuidMixin, CreatedMixin, UpdatedMixin
+from .validators import TimeRangeValidator
 from .subscriber import Subscriber
 
 
@@ -18,7 +19,7 @@ class SubscriberCall(UuidMixin, CreatedMixin, UpdatedMixin, models.Model):
         related_name="received_calls",
         verbose_name=_("call receiver"),
     )
-    start = models.DateTimeField(_("start time"))
+    start = models.DateTimeField(_("start time"), validators=(TimeRangeValidator(),))
     duration = models.DurationField(_("duration"))
 
     def __str__(self) -> str:

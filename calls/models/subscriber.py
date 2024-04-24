@@ -1,3 +1,4 @@
+from datetime import date
 from typing import cast
 
 from django.db import models
@@ -8,6 +9,7 @@ from django.contrib.auth import get_user_model
 from auth_users.export.types import UserType
 
 from .mixins import UuidMixin, CreatedMixin, UpdatedMixin
+from .validators import TimeRangeValidator
 
 
 PASSPORT_MAX_LENGTH = 11
@@ -30,11 +32,14 @@ class Subscriber(UuidMixin, CreatedMixin, UpdatedMixin, models.Model):
     passport = models.CharField(
         _("passport number"),
         max_length=PASSPORT_MAX_LENGTH,
-        validators=[RegexValidator(PASSPORT_REGEX, INCORRECT_PASSPORT_MESSAGE)],
+        validators=(RegexValidator(PASSPORT_REGEX, INCORRECT_PASSPORT_MESSAGE),),
         unique=True,
         help_text=PASSPORT_HELP_TEXT,
     )
-    birth_date = models.DateField(_("birth day"))
+    birth_date = models.DateField(
+        _("birth day"),
+        validators=(TimeRangeValidator(start=date(1920, 1, 1)),),
+    )
 
     operators = models.ManyToManyField(
         "Operator",
