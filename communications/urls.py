@@ -31,7 +31,10 @@ auth_user_register_routes(router)
 calls_register_routes(router)
 
 urlpatterns = [
-    *i18n_patterns(path("admin/", admin.site.urls), prefix_default_language=False),
-    path("", include(router.urls)),
-    path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
+    *i18n_patterns(
+        path("admin/", admin.site.urls),
+        path("", include(router.urls)),
+        path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
+        prefix_default_language=False,
+    ),
 ]
