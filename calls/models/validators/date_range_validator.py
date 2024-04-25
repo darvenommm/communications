@@ -6,16 +6,18 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.deconstruct import deconstructible
 
 
-DateType: TypeAlias = date | datetime
+TimeRangeType: TypeAlias = date | datetime
 
 
 @deconstructible
 class TimeRangeValidator:
-    def __init__(self, start: Optional[DateType] = None, end: Optional[DateType] = None) -> None:
+    def __init__(
+        self, start: Optional[TimeRangeType] = None, end: Optional[TimeRangeType] = None
+    ) -> None:
         self.__start = start
         self.__end = end
 
-    def __call__(self, given_date: DateType) -> None | NoReturn:
+    def __call__(self, given_date: TimeRangeType) -> None | NoReturn:
         end = self.end
 
         if not end:
@@ -33,9 +35,9 @@ class TimeRangeValidator:
         return (self.start == other.start) and (self.end == other.start)
 
     @property
-    def start(self) -> Optional[DateType]:
+    def start(self) -> Optional[TimeRangeType]:
         return self.__start
 
     @property
-    def end(self) -> Optional[DateType]:
+    def end(self) -> Optional[TimeRangeType]:
         return self.__end
