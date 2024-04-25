@@ -50,7 +50,7 @@ class Subscriber(UuidMixin, CreatedMixin, UpdatedMixin, models.Model):
     )
 
     def __str__(self) -> str:
-        return self.user.full_name
+        return str(self.user)
 
     class Meta:
         verbose_name = _("subscriber")

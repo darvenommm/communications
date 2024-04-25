@@ -19,18 +19,4 @@ class SubscriberAdmin(admin.ModelAdmin):
 
     inlines = (OperatorInline,)
     list_filter = ("operators",)
-
-    fieldsets = (
-        (
-            _("user"),
-            {
-                "fields": ("user",),
-            },
-        ),
-        (
-            _("subscriber fields"),
-            {
-                "fields": ("birth_date", "passport"),
-            },
-        ),
-    )
+    fields = ("user", "birth_date", "passport")

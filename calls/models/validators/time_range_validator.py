@@ -4,6 +4,7 @@ from typing import Optional, NoReturn, Self, TypeAlias
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django.utils.deconstruct import deconstructible
+from django.utils.timezone import get_current_timezone
 
 
 TimeRangeType: TypeAlias = date | datetime
@@ -21,15 +22,27 @@ class TimeRangeValidator:
         end = self.end
 
         if not end:
-            end = date.today() if isinstance(given_date, date) else datetime.today()
+            end = (
+                datetime.today().astimezone(get_current_timezone())
+                if isinstance(given_date, datetime)
+                else date.today()
+            )
 
         if self.start and given_date < self.start:
             raise ValidationError(
-                _("Given time should be after %(start)s!") % {"start": str(self.start)}
+                _("Given time should be after %(start)s!"),
+                code="invalid",
+                params={"start": str(self.start)},
             )
 
         if end < given_date:
-            raise ValidationError(_("Given time should be before %(end)s!") % {"end": str(end)})
+            raise ValidationError(
+                _("Given time should be before %(end)s!"),
+                code="invalid",
+                params={
+                    "end": str(end),
+                },
+            )
 
     def __eq__(self, other: Self) -> bool:
         return (self.start == other.start) and (self.end == other.start)

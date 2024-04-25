@@ -18,11 +18,4 @@ class OperatorAdmin(admin.ModelAdmin):
 
     inlines = (SubscribersInlineAdmin,)
 
-    fieldsets = (
-        (
-            _("operator fields"),
-            {
-                "fields": ("title", "description", "foundation_date"),
-            },
-        ),
-    )
+    fields = ("title", "description", "foundation_date")

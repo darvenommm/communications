@@ -8,12 +8,4 @@ class OperatorSubscriberAdmin(admin.ModelAdmin):
     list_per_page = 25
     list_display = ("operator", "subscriber")
     list_display_links = ("operator", "subscriber")
-
-    fieldsets = (
-        (
-            _("operator - subscriber fields"),
-            {
-                "fields": ("operator", "subscriber"),
-            },
-        ),
-    )
+    fields = ("operator", "subscriber")

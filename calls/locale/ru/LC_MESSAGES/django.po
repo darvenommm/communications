@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-24 15:04+0300\n"
+"POT-Creation-Date: 2024-04-25 20:22+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,57 +20,37 @@ msgstr ""
 "n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
 "(n%100>=11 && n%100<=14)? 2 : 3);\n"
 
-#: calls/admin_models/operator_admin.py:23
-msgid "operator fields"
-msgstr "поля оператора"
-
-#: calls/admin_models/operator_subscriber_admin.py:14
-msgid "operator - subscriber fields"
-msgstr "поля оператор - абонент"
-
-#: calls/admin_models/subscriber_admin.py:25
-msgid "user"
-msgstr "пользователь"
-
-#: calls/admin_models/subscriber_admin.py:31
-msgid "subscriber fields"
-msgstr "поля абонента"
-
-#: calls/admin_models/subscriber_call_admin.py:19
-msgid "subscriber call fields"
-msgstr "поля звонка абонента"
+#: calls/admin_models/subscriber_call_admin.py:17
+msgid "The fields caller and receiver can't be equal"
+msgstr "Поля звоняший и получатель звонка не могут быть равными"
 
 #: calls/apps.py:8
 msgid "communication via calls"
 msgstr "связь через звонки"
 
-#: calls/models/operator.py:12
+#: calls/models/operator.py:13
 msgid "title"
 msgstr "заголовок"
 
-#: calls/models/operator.py:13
+#: calls/models/operator.py:14
 msgid "foundation date"
 msgstr "дата основания"
 
-#: calls/models/operator.py:15
+#: calls/models/operator.py:16
 msgid "description"
 msgstr "описание"
 
-#: calls/models/operator.py:26 calls/models/subscriber.py:57
+#: calls/models/operator.py:27 calls/models/subscriber.py:57
 msgid "subscribers"
 msgstr "абоненты"
 
-#: calls/models/operator.py:33
-msgid "mobile operator"
-msgstr "мобильный оператор"
-
-#: calls/models/operator.py:34
-msgid "mobile operators"
-msgstr "мобильные операторы"
-
-#: calls/models/operator_subscriber.py:11
+#: calls/models/operator.py:34 calls/models/operator_subscriber.py:11
 msgid "operator"
 msgstr "оператор"
+
+#: calls/models/operator.py:35 calls/models/subscriber.py:49
+msgid "operators"
+msgstr "операторы"
 
 #: calls/models/operator_subscriber.py:12 calls/models/subscriber.py:56
 msgid "subscriber"
@@ -99,10 +79,6 @@ msgstr "номер паспорта"
 #: calls/models/subscriber.py:40
 msgid "birth day"
 msgstr "день рождения"
-
-#: calls/models/subscriber.py:49
-msgid "operators"
-msgstr "операторы"
 
 #: calls/models/subscriber_call.py:14
 msgid "caller"
@@ -133,12 +109,17 @@ msgstr "звонок абонента"
 msgid "subscribers calls"
 msgstr "звонки абонентов"
 
-#: calls/models/validators/date_range_validator.py:26
+#: calls/models/validators/duration_positivity_validator.py:10
+#, python-format
+msgid "%(duration_value)s is not a valid duration. It must be positive."
+msgstr "%(duration_value)s не корректное продолжительность звонка. Оно должно быть больше 0."
+
+#: calls/models/validators/time_range_validator.py:33
 #, python-format
 msgid "Given time should be after %(start)s!"
 msgstr "Переданноe время должно быть после %(start)s!"
 
-#: calls/models/validators/date_range_validator.py:30
+#: calls/models/validators/time_range_validator.py:40
 #, python-format
 msgid "Given time should be before %(end)s!"
 msgstr "Переданноe время должно быть до %(end)s!"
