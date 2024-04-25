@@ -149,8 +149,14 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "auth_users.User"
 
+
 REST_FRAMEWORK = {
-    "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
+    "DEFAULT_RENDERER_CLASSES": [
+        "rest_framework.renderers.JSONRenderer",
     ],
 }
+
+if DEBUG:
+    REST_FRAMEWORK.get("DEFAULT_RENDERER_CLASSES", []).append(
+        "rest_framework.renderers.BrowsableAPIRenderer",
+    )

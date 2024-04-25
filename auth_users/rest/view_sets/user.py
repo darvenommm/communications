@@ -3,18 +3,23 @@ from rest_framework import serializers, viewsets
 from auth_users.models import User
 
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
+        depth = 1
         fields = (
             "id",
+            "username",
             "first_name",
             "last_name",
-            "username",
+            "full_name",
             "is_active",
             "is_staff",
             "is_superuser",
+            "date_joined",
             "last_login",
+            "groups",
+            "user_permissions",
         )
 
 

@@ -3,10 +3,11 @@ from rest_framework import serializers, viewsets
 from calls.models import OperatorSubscriber
 
 
-class OperatorSubscriberSerializer(serializers.HyperlinkedModelSerializer):
+class OperatorSubscriberSerializer(serializers.ModelSerializer):
     class Meta:
         model = OperatorSubscriber
-        fields = ("id", "operator", "subscriber")
+        depth = 1
+        fields = "__all__"
 
 
 class OperatorSubscriberViewSet(viewsets.ModelViewSet):
