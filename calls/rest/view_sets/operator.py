@@ -6,7 +6,7 @@ from calls.models import Operator
 class OperatorSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Operator
-        fields = ("__all__",)
+        fields = ("id", "title", "description", "foundation_date", "subscribers")
 
 
 class OperatorViewSet(viewsets.ModelViewSet):

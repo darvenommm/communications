@@ -21,13 +21,14 @@ from django.conf.urls.i18n import i18n_patterns
 
 from rest_framework.routers import DefaultRouter
 
+from auth_users.export.rest import register_routes as auth_user_register_routes
 from calls.export.rest import register_routes as calls_register_routes
 
 
 router = DefaultRouter()
 
+auth_user_register_routes(router)
 calls_register_routes(router)
-
 
 urlpatterns = [
     *i18n_patterns(path("admin/", admin.site.urls), prefix_default_language=False),

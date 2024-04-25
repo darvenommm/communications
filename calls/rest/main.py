@@ -1,9 +1,19 @@
 from rest_framework.routers import BaseRouter
 
-from .operator_view_set import OperatorViewSet
+from .view_sets import (
+    OperatorViewSet,
+    SubscriberViewSet,
+    SubscriberCallViewSet,
+    OperatorSubscriberViewSet,
+)
 
 
-routes = (("operators", OperatorViewSet),)
+routes = (
+    ("operators", OperatorViewSet),
+    ("subscribers", SubscriberViewSet),
+    ("subscribers_calls", SubscriberCallViewSet),
+    ("operators_subscriber", OperatorSubscriberViewSet),
+)
 
 
 def register_routes(router: BaseRouter) -> BaseRouter:

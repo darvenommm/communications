@@ -23,7 +23,7 @@ class User(AbstractUser):
     )
 
     def __str__(self) -> str:
-        # admin by default no have first and last names -> empty string with one space
+        # By default in the db has one user with empty first and last name, it's admin 99%
         full_name = cast(str, self.full_name).strip()
 
         return f"{self.full_name if full_name else _('admin')}"
