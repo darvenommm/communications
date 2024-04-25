@@ -1,4 +1,4 @@
-from .date_range_validator import TimeRangeValidator
+from .time_range_validator import TimeRangeValidator
 
 
 __all__ = ("TimeRangeValidator",)
