@@ -1,15 +1,11 @@
-from rest_framework import permissions, viewsets
+from rest_framework import viewsets
 
 from calls.models import Operator
-from .serializers import OperatorReadSerializer
+from .serializers import OperatorSerializer
+from .permisions import OperatorPermission
 
 
 class OperatorViewSet(viewsets.ModelViewSet):
     queryset = Operator.objects.prefetch_related("subscribers").all()
-
-    def get_serializer_class(self):
-        match self.request.method:
-            case _:
-                self.serializer_class = OperatorReadSerializer
-
-        return super().get_serializer_class()
+    serializer_class = OperatorSerializer
+    permission_classes = (OperatorPermission,)
