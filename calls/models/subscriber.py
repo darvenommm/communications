@@ -45,7 +45,6 @@ class Subscriber(UuidMixin, CreatedMixin, UpdatedMixin, models.Model):
         "Operator",
         blank=True,
         through="OperatorSubscriber",
-        related_name="+",
         verbose_name=_("operators"),
     )
 

@@ -1,6 +1,6 @@
 from rest_framework.routers import BaseRouter
 
-from .view_sets import UserViewSet
+from .user import UserViewSet
 
 
 routes = (("users", UserViewSet),)

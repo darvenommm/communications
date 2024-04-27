@@ -23,7 +23,6 @@ class Operator(UuidMixin, CreatedMixin, UpdatedMixin, models.Model):
         "Subscriber",
         blank=True,
         through="OperatorSubscriber",
-        related_name="+",
         verbose_name=_("subscribers"),
     )
 

@@ -1,18 +1,17 @@
 from rest_framework.routers import BaseRouter
 
 from .view_sets import (
-    OperatorViewSet,
-    SubscriberViewSet,
     SubscriberCallViewSet,
-    OperatorSubscriberViewSet,
 )
+
+from .subscriber import SubscriberViewSet
+from .operator import OperatorViewSet
 
 
 routes = (
     ("operators", OperatorViewSet),
     ("subscribers", SubscriberViewSet),
     ("subscribers_calls", SubscriberCallViewSet),
-    ("operators_subscriber", OperatorSubscriberViewSet),
 )
 
 

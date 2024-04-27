@@ -20,6 +20,7 @@ from django.urls import path, include
 from django.conf.urls.i18n import i18n_patterns
 
 from rest_framework.routers import DefaultRouter
+from rest_framework.authtoken import views
 
 from auth_users.export.rest import register_routes as auth_user_register_routes
 from calls.export.rest import register_routes as calls_register_routes
@@ -33,8 +34,9 @@ calls_register_routes(router)
 urlpatterns = [
     *i18n_patterns(
         path("admin/", admin.site.urls),
-        path("api/v1/", include(router.urls)),
+        path("api/", include(router.urls)),
         path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
+        path("api-token-auth/", views.obtain_auth_token),
         prefix_default_language=False,
     ),
 ]
