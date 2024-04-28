@@ -37,7 +37,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ("username", "email", "password", "first_name", "last_name")
+        fields = ("id", "username", "email", "password", "first_name", "last_name")
 
     def create(self, validated_data):
         validated_data["password"] = make_password(validated_data["password"])
@@ -50,7 +50,7 @@ class UserUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ("username", "email", "password", "first_name", "last_name")
+        fields = ("id", "username", "email", "password", "first_name", "last_name")
 
     def update(self, user: User, validated_data: dict[str, str]) -> User:
         user.username = validated_data.get("username", user.username)

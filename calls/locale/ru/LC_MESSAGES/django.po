@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-25 20:22+0300\n"
+"POT-Creation-Date: 2024-04-28 22:30+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -40,19 +40,19 @@ msgstr "дата основания"
 msgid "description"
 msgstr "описание"
 
-#: calls/models/operator.py:27 calls/models/subscriber.py:57
+#: calls/models/operator.py:26 calls/models/subscriber.py:56
 msgid "subscribers"
 msgstr "абоненты"
 
-#: calls/models/operator.py:34 calls/models/operator_subscriber.py:11
+#: calls/models/operator.py:33 calls/models/operator_subscriber.py:11
 msgid "operator"
 msgstr "оператор"
 
-#: calls/models/operator.py:35 calls/models/subscriber.py:49
+#: calls/models/operator.py:34 calls/models/subscriber.py:48
 msgid "operators"
 msgstr "операторы"
 
-#: calls/models/operator_subscriber.py:12 calls/models/subscriber.py:56
+#: calls/models/operator_subscriber.py:12 calls/models/subscriber.py:55
 msgid "subscriber"
 msgstr "абонент"
 
@@ -112,7 +112,9 @@ msgstr "звонки абонентов"
 #: calls/models/validators/duration_positivity_validator.py:10
 #, python-format
 msgid "%(duration_value)s is not a valid duration. It must be positive."
-msgstr "%(duration_value)s не корректное продолжительность звонка. Оно должно быть больше 0."
+msgstr ""
+"%(duration_value)s не корректное продолжительность звонка. Оно должно быть "
+"больше 0."
 
 #: calls/models/validators/time_range_validator.py:33
 #, python-format
@@ -123,3 +125,7 @@ msgstr "Переданноe время должно быть после %(start)
 #, python-format
 msgid "Given time should be before %(end)s!"
 msgstr "Переданноe время должно быть до %(end)s!"
+
+#: calls/rest/subscriber_call/serializers.py:33
+msgid "Caller and receiver should be difference!"
+msgstr "Звонящий и получатель звонка должны быть разными!"

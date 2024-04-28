@@ -31,14 +31,14 @@ class TimeRangeValidator:
         if self.start and given_date < self.start:
             raise ValidationError(
                 _("Given time should be after %(start)s!"),
-                code="invalid",
+                code="invalid_time",
                 params={"start": str(self.start)},
             )
 
         if end < given_date:
             raise ValidationError(
                 _("Given time should be before %(end)s!"),
-                code="invalid",
+                code="invalid_time",
                 params={
                     "end": str(end),
                 },

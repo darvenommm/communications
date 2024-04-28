@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-24 15:04+0300\n"
+"POT-Creation-Date: 2024-04-28 22:30+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,15 +20,15 @@ msgstr ""
 "n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
 "(n%100>=11 && n%100<=14)? 2 : 3);\n"
 
-#: auth_users/admin.py:15
+#: auth_users/admin.py:19
 msgid "group"
 msgstr "Группа"
 
-#: auth_users/admin.py:16
+#: auth_users/admin.py:20
 msgid "groups"
 msgstr "Группы"
 
-#: auth_users/admin_models/user_admin.py:9
+#: auth_users/admin_models/user_admin.py:15
 msgid "user fields"
 msgstr "поля пользователя"
 
@@ -36,10 +36,10 @@ msgstr "поля пользователя"
 msgid "users"
 msgstr "пользователя"
 
-#: auth_users/models/user.py:16
+#: auth_users/models/user.py:21
 msgid "first name"
 msgstr "имя"
 
-#: auth_users/models/user.py:17
+#: auth_users/models/user.py:22
 msgid "last name"
 msgstr "фамилия"
