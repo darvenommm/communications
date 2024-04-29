@@ -6,7 +6,7 @@ from .permissions import SubscriberCallPermission
 from .serializers import (
     SubscriberCallReadSerializer,
     SubscriberCallDeleteSerializer,
-    SubscriberCreateAndUpdateSerializer,
+    SubscriberCallCreateAndUpdateSerializer,
 )
 
 
@@ -28,7 +28,7 @@ class SubscriberCallViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         match self.request.method:
             case "POST" | "PUT" | "PATCH":
-                self.serializer_class = SubscriberCreateAndUpdateSerializer
+                self.serializer_class = SubscriberCallCreateAndUpdateSerializer
             case "DELETE":
                 self.serializer_class = SubscriberCallDeleteSerializer
             case _:

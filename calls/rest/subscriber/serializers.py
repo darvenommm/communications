@@ -36,7 +36,7 @@ class SubscriberReadExtendedSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Subscriber
-        fields: tuple[str, ...] = ("id", "birth_date", "passport", "user", "operators")
+        fields = ("id", "birth_date", "passport", "user", "operators")
         depth = 1
 
 
@@ -113,7 +113,7 @@ class SubscriberUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Subscriber
-        fields = ("id", "passport", "birth_date", "user", "operators")
+        fields = ("passport", "birth_date", "user", "operators")
 
     def update(self, subscriber: Subscriber, validated_data: dict[str, Any]) -> Subscriber:
         user = subscriber.user

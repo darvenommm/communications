@@ -18,6 +18,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RunSQL("create schema if not exists communications;"),
         migrations.CreateModel(
             name="Operator",
             fields=[

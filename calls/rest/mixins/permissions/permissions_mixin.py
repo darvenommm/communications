@@ -1,7 +1,7 @@
 from rest_framework import permissions, request
 
 
-class PermissionChecker:
+class PermissionMixin:
     def is_admin(self, request: request.HttpRequest) -> bool:
         return bool(request.user and getattr(request.user, "is_staff", False))
 

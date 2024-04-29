@@ -3,7 +3,6 @@ services:
     image: postgres:16.2
     restart: always
     shm_size: 256mb
-    env_file: .env
     environment:
       - POSTGRES_DB=$DB_NAME
       - POSTGRES_USER=$DB_USER
@@ -13,8 +12,6 @@ services:
       interval: 2s
       timeout: 3s
       retries: 120
-    volumes:
-      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
     ports:
       - $DB_PORT:5432
     networks:

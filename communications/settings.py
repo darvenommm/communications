@@ -98,7 +98,10 @@ DATABASES = {
         "PASSWORD": DB_PASSWORD,
         "HOST": getenv("DB_HOST", "127.0.0.1"),
         "PORT": int(getenv("DB_PORT", 5432)),
-    }
+        "OPTIONS": {
+            "options": "-c search_path=communications,public",
+        },
+    },
 }
 
 
@@ -160,6 +163,8 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.TokenAuthentication",
     ],
 }
+
+REST_FRAMEWORK_API_PATH = "api/"
 
 if DEBUG:
     REST_FRAMEWORK.get("DEFAULT_RENDERER_CLASSES", []).append(

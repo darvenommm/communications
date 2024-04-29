@@ -1,10 +1,10 @@
 from rest_framework import permissions, request, viewsets
 
-from calls.rest.mixins.permissions import PermissionChecker
+from calls.rest.mixins.permissions import PermissionMixin
 from calls.models import SubscriberCall
 
 
-class SubscriberCallPermission(PermissionChecker, permissions.BasePermission):
+class SubscriberCallPermission(PermissionMixin, permissions.BasePermission):
     def has_permission(self, request: request.HttpRequest, view: viewsets.ModelViewSet):
         if self.is_admin_or_safe(request):
             return True

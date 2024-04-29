@@ -23,14 +23,14 @@ class SubscriberCallDeleteSerializer(serializers.ModelSerializer):
         fields = ("id",)
 
 
-class SubscriberCreateAndUpdateSerializer(serializers.ModelSerializer):
+class SubscriberCallCreateAndUpdateSerializer(serializers.ModelSerializer):
     caller = serializers.PrimaryKeyRelatedField(queryset=Subscriber.objects.all())
     receiver = serializers.PrimaryKeyRelatedField(queryset=Subscriber.objects.all())
 
     def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
         if attrs["caller"] == attrs["receiver"]:
             raise ValidationError(
-                {"caller_and_receiver": _("Caller and receiver should be difference!")},
+                {"caller_and_receiver": _("Caller and receiver should be different!")},
                 code="invalid",
             )
 

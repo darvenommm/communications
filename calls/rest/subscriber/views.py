@@ -30,7 +30,7 @@ class SubscriberViewSet(viewsets.ModelViewSet):
                 user = self.request.user
                 is_staff = cast(bool, getattr(user, "is_staff"))
 
-                if not isinstance(user, AnonymousUser):
+                if not isinstance(user, AnonymousUser) and getattr(user, "subscriber", False):
                     current_subscriber_pk = str(cast(Subscriber, getattr(user, "subscriber")).pk)
                 else:
                     current_subscriber_pk = ""

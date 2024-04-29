@@ -14,12 +14,12 @@ from .types import GeneratedFieldsType
 
 
 class User(AbstractUser):
-    FIRST_NAME_MAX_LENGTH = 150
-    LAST_NAME_MAX_LENGTH = 150
+    first_name_max_length = 150
+    last_name_max_length = 150
 
     id = models.UUIDField(primary_key=True, default=uuid4)
-    first_name = models.CharField(_("first name"), max_length=FIRST_NAME_MAX_LENGTH, blank=False)
-    last_name = models.CharField(_("last name"), max_length=LAST_NAME_MAX_LENGTH, blank=False)
+    first_name = models.CharField(_("first name"), max_length=first_name_max_length, blank=False)
+    last_name = models.CharField(_("last name"), max_length=last_name_max_length, blank=False)
 
     full_name = cast(GeneratedFieldsType, getattr(models, "GeneratedField"))(
         expression=ConcatString("first_name", models.Value(" "), "last_name"),

@@ -1,0 +1,11 @@
+services:
+  server:
+    build: ./commands/tests/Dockerfile
+    healthcheck:
+      test: ["netstat -ano | findStr \"$SERVER_PORT_FOR_TESTS\""]
+      timeout: 5s
+      retries: 10
+      start_period: 1s
+
+networks:
+  net:

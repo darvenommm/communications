@@ -1,10 +1,10 @@
 from rest_framework import permissions, request, viewsets
 
 from calls.models import Operator
-from calls.rest.mixins.permissions import PermissionChecker
+from calls.rest.mixins.permissions import PermissionMixin
 
 
-class OperatorPermission(PermissionChecker, permissions.BasePermission):
+class OperatorPermission(PermissionMixin, permissions.BasePermission):
     def has_permission(self, request: request.HttpRequest, view: viewsets.ModelViewSet):
         if self.is_admin_or_safe(request):
             return True

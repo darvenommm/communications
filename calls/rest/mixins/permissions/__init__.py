@@ -1,4 +1,4 @@
-from .permissions_checker import PermissionChecker
+from .permissions_mixin import PermissionMixin
 
 
-__all__ = ("PermissionChecker",)
+__all__ = ("PermissionMixin",)

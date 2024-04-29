@@ -50,7 +50,7 @@ class UserUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ("id", "username", "email", "password", "first_name", "last_name")
+        fields = ("username", "email", "password", "first_name", "last_name")
 
     def update(self, user: User, validated_data: dict[str, str]) -> User:
         user.username = validated_data.get("username", user.username)
