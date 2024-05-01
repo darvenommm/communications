@@ -1,12 +1,12 @@
 from rest_framework import permissions, request, viewsets
 
-from calls.rest.mixins.permissions import PermissionMixin
+from library.PermissionHelperMixin import PermissionHelperMixin
 from calls.models import SubscriberCall
 
 
-class SubscriberCallPermission(PermissionMixin, permissions.BasePermission):
+class SubscriberCallPermission(PermissionHelperMixin, permissions.BasePermission):
     def has_permission(self, request: request.HttpRequest, view: viewsets.ModelViewSet):
-        if self.is_admin_or_safe(request):
+        if self.is_admin_or_safe_method(request):
             return True
 
         return view.detail
@@ -17,7 +17,7 @@ class SubscriberCallPermission(PermissionMixin, permissions.BasePermission):
         if self.is_admin(request):
             return True
 
-        if not self.is_safe(request):
+        if not self.is_safe_method(request):
             return False
 
         return request.user.pk in (call.caller.user.pk, call.receiver.user.pk)

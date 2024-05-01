@@ -2,13 +2,11 @@ from typing import cast
 
 from rest_framework import permissions, viewsets, request
 
+from library.PermissionHelperMixin import PermissionHelperMixin
 from auth_users.models import User
 
 
-class UserPermission(permissions.BasePermission):
-    def is_admin(self, request: request.HttpRequest) -> bool:
-        return bool(request.user and cast(User, request.user).is_staff)
-
+class UserPermission(PermissionHelperMixin, permissions.BasePermission):
     def has_permission(self, request: request.HttpRequest, view: viewsets.ModelViewSet):
         if self.is_admin(request):
             return True

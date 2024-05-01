@@ -1,12 +1,10 @@
-from django.test import TestCase
 from rest_framework import status
 
-from calls.rest.mixins.tests import ApiTestMixinWrapper
+from library.ApiStatusTestCase import ApiStatusTestCaseWrapper
 
 
-class OperatorTestCase(ApiTestMixinWrapper.ApiTestMixin, TestCase):
+class OperatorTestCase(ApiStatusTestCaseWrapper.ApiStatusTestCase):
     entity_name = "operators"
-
     entity_data = {
         "title": "test_title",
         "description": "test_description",

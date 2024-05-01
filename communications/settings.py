@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from os import getenv
 from pathlib import Path
+import sys
 
 from django.utils.translation import gettext_lazy as _
 
@@ -19,9 +20,13 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# add the apps directory to python paths
+apps_path = Path(__file__).resolve().parent.parent / "apps"
+sys.path.append(apps_path.absolute().as_posix())
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/

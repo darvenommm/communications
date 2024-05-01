@@ -45,3 +45,8 @@ class SubscriberViewSet(viewsets.ModelViewSet):
                 )
 
         return super().get_serializer_class()
+
+    def perform_destroy(self, subscriber: Subscriber):
+        subscriber.user.delete()
+
+        return super().perform_destroy(subscriber)

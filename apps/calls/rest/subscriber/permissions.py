@@ -1,10 +1,10 @@
 from rest_framework import permissions, request, viewsets
 
-from calls.rest.mixins.permissions import PermissionMixin
+from library.PermissionHelperMixin import PermissionHelperMixin
 from calls.models import Subscriber
 
 
-class SubscriberPermission(PermissionMixin, permissions.BasePermission):
+class SubscriberPermission(PermissionHelperMixin, permissions.BasePermission):
     def has_permission(self, request: request.HttpRequest, view: viewsets.ModelViewSet):
         if self.is_admin(request):
             return True
@@ -17,7 +17,7 @@ class SubscriberPermission(PermissionMixin, permissions.BasePermission):
     def has_object_permission(
         self, request: request.HttpRequest, _: viewsets.ModelViewSet, subscriber: Subscriber
     ):
-        if self.is_admin_or_safe(request):
+        if self.is_admin_or_safe_method(request):
             return True
 
         return request.user == subscriber.user
