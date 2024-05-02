@@ -28,7 +28,7 @@ class ApiStatusTestCaseWrapper:
 
         _test_users: tuple[test.APIClient, ...] = ()
 
-        _user_fields: tuple[str, ...] = ("first_name", "last_name", "username", "password")
+        __user_fields: tuple[str, ...] = ("first_name", "last_name", "username", "password")
 
         @classmethod
         def setUpClass(cls) -> None:
@@ -144,7 +144,7 @@ class ApiStatusTestCaseWrapper:
         def __create_unique_user_data(cls, unique_name: str) -> dict[str, str]:
             return {
                 field_name: f"{cls.__name__}_{unique_name}_{field_name}"
-                for field_name in cls._user_fields
+                for field_name in cls.__user_fields
             }
 
         @classmethod
