@@ -10,4 +10,4 @@ RUN poetry update
 
 COPY . .
 
-CMD /bin/bash -c "poetry run python manage.py runserver 0.0.0.0:$SERVER_PORT"
+CMD /bin/bash -c "./commands/run-server.sh"

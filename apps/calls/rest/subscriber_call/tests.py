@@ -42,7 +42,7 @@ class SubscriberCallTestCase(ApiStatusTestCaseWrapper.ApiStatusTestCase):
         )
         caller_client.credentials(HTTP_AUTHORIZATION=f"Token {caller_token}")
 
-        cls._test_users += (caller_client,)
+        cls.add_to_test_users(caller_client)
 
     entity_name = "subscribers_calls"
 

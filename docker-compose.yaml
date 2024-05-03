@@ -1,5 +1,6 @@
 services:
   database:
+    container_name: communications-database
     image: postgres:16.2
     restart: always
     shm_size: 256mb
@@ -13,21 +14,22 @@ services:
       interval: 2s
       timeout: 3s
       retries: 120
-    ports:
-      - ${DB_PORT}:5432
     networks:
       - net
 
   server:
+    container_name: communications-server
     build: .
     env_file: .env
     depends_on:
       database:
         condition: service_healthy
-    networks:
-      - net
     environment:
       - SERVER_PORT=${SERVER_PORT}
+    ports:
+      - ${SERVER_PORT}:${SERVER_PORT}
+    networks:
+      - net
 
 networks:
   net:

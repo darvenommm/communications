@@ -26,7 +26,7 @@ class ApiStatusTestCaseWrapper:
         change_patch_statuses: HttpStatusesType = (status.HTTP_200_OK, status.HTTP_200_OK)
         delete_statuses: HttpStatusesType = (status.HTTP_204_NO_CONTENT, status.HTTP_204_NO_CONTENT)
 
-        _test_users: tuple[test.APIClient, ...] = ()
+        __test_users: tuple[test.APIClient, ...] = ()
 
         __user_fields: tuple[str, ...] = ("first_name", "last_name", "username", "password")
 
@@ -36,28 +36,28 @@ class ApiStatusTestCaseWrapper:
             cls.authorized = cls.__create_authorized()
             cls.admin = cls.__create_admin()
 
-            cls._test_users = (cls.anonym, cls.authorized)
+            cls.add_to_test_users(cls.anonym, cls.authorized)
 
             cls.__entities_url = cls.__get_entities_url()
 
             super().setUpClass()
 
         def test_get_all(self) -> None:
-            for index, test_user in enumerate(self._test_users):
+            for index, test_user in enumerate(self.__test_users):
                 response = cast(Response, test_user.get(self.__entities_url))
                 self.assertEqual(response.status_code, self.get_all_statuses[index])
 
         def test_get_one(self) -> None:
             entity_url = self.__create_and_get_entity_url()
 
-            for index, test_user in enumerate(self._test_users):
+            for index, test_user in enumerate(self.__test_users):
                 response = cast(Response, test_user.get(entity_url))
                 self.assertEqual(response.status_code, self.get_one_statuses[index])
 
             self.__delete_by_entity_url(entity_url)
 
         def test_create(self) -> None:
-            for index, test_user in enumerate(self._test_users):
+            for index, test_user in enumerate(self.__test_users):
                 response = cast(
                     Response, test_user.post(self.__entities_url, self.entity_data, format="json")
                 )
@@ -69,7 +69,7 @@ class ApiStatusTestCaseWrapper:
         def test_put_update(self) -> None:
             entity_url = self.__create_and_get_entity_url()
 
-            for index, test_user in enumerate(self._test_users):
+            for index, test_user in enumerate(self.__test_users):
                 response = cast(
                     Response, test_user.put(entity_url, self.entity_data, format="json")
                 )
@@ -80,7 +80,7 @@ class ApiStatusTestCaseWrapper:
         def test_patch_update(self) -> None:
             entity_url = self.__create_and_get_entity_url()
 
-            for index, test_user in enumerate(self._test_users):
+            for index, test_user in enumerate(self.__test_users):
                 response = cast(
                     Response, test_user.patch(entity_url, self.entity_data, format="json")
                 )
@@ -91,7 +91,7 @@ class ApiStatusTestCaseWrapper:
         def test_delete_update(self) -> None:
             entity_url = self.__create_and_get_entity_url()
 
-            for index, test_user in enumerate(self._test_users):
+            for index, test_user in enumerate(self.__test_users):
                 response = cast(
                     Response, test_user.delete(entity_url, self.entity_data, format="json")
                 )
@@ -179,3 +179,8 @@ class ApiStatusTestCaseWrapper:
 
         def __delete_by_entity_url(self, entity_url: str) -> None:
             self.admin.delete(entity_url)
+
+        @classmethod
+        def add_to_test_users(cls, *test_users: test.APIClient) -> None:
+            for test_user in test_users:
+                cls.__test_users += (test_user,)
