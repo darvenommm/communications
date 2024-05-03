@@ -20,10 +20,26 @@ msgstr ""
 "n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
 "(n%100>=11 && n%100<=14)? 2 : 3);\n"
 
-#: communications/settings.py:134
-msgid "English"
-msgstr "English"
+#: auth_users/admin.py:19
+msgid "group"
+msgstr "Группа"
 
-#: communications/settings.py:135
-msgid "Russian"
-msgstr "Русский"
+#: auth_users/admin.py:20
+msgid "groups"
+msgstr "Группы"
+
+#: auth_users/admin_models/user_admin.py:15
+msgid "user fields"
+msgstr "поля пользователя"
+
+#: auth_users/apps.py:8
+msgid "users"
+msgstr "пользователя"
+
+#: auth_users/models/user.py:21
+msgid "first name"
+msgstr "имя"
+
+#: auth_users/models/user.py:22
+msgid "last name"
+msgstr "фамилия"

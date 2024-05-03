@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from os import getenv
 from pathlib import Path
+import sys
 
 from django.utils.translation import gettext_lazy as _
 
@@ -19,9 +20,13 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# add the apps directory to python paths
+apps_path = Path(__file__).resolve().parent.parent / "apps"
+sys.path.append(apps_path.absolute().as_posix())
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -44,6 +49,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "rest_framework",
+    "rest_framework.authtoken",
     "auth_users.apps.AuthUsersConfig",
     "calls.apps.CallsConfig",
 ]
@@ -96,7 +103,10 @@ DATABASES = {
         "PASSWORD": DB_PASSWORD,
         "HOST": getenv("DB_HOST", "127.0.0.1"),
         "PORT": int(getenv("DB_PORT", 5432)),
-    }
+        "OPTIONS": {
+            "options": "-c search_path=communications,public",
+        },
+    },
 }
 
 
@@ -147,3 +157,21 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "auth_users.User"
+
+
+REST_FRAMEWORK = {
+    "DEFAULT_RENDERER_CLASSES": [
+        "rest_framework.renderers.JSONRenderer",
+    ],
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
+    ],
+}
+
+REST_FRAMEWORK_API_PATH = "api/"
+
+if DEBUG:
+    REST_FRAMEWORK.get("DEFAULT_RENDERER_CLASSES", []).append(
+        "rest_framework.renderers.BrowsableAPIRenderer",
+    )
