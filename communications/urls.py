@@ -23,14 +23,16 @@ from django.conf.urls.i18n import i18n_patterns
 from rest_framework.routers import DefaultRouter
 from rest_framework.authtoken import views
 
-from auth_users.export.rest import register_routes as auth_user_register_routes
-from calls.export.rest import register_routes as calls_register_routes
+from auth_users.rest import register_rest_routes as auth_user_register
+from calls.rest import register_rest_routes as calls_register
 
 
 router = DefaultRouter()
+registers = (auth_user_register, calls_register)
 
-auth_user_register_routes(router)
-calls_register_routes(router)
+for register in registers:
+    register(router)
+
 
 urlpatterns = [
     *i18n_patterns(

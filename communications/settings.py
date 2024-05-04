@@ -20,13 +20,13 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# add the apps directory to python paths
+apps_path = Path(__file__).parent.parent.resolve() / "apps"
+sys.path.append(apps_path.absolute().as_posix())
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-# add the apps directory to python paths
-apps_path = Path(__file__).resolve().parent.parent / "apps"
-sys.path.append(apps_path.absolute().as_posix())
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -43,6 +43,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "auth_users.apps.AuthUsersConfig",
+    "calls.apps.CallsConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -51,8 +53,6 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "rest_framework.authtoken",
-    "auth_users.apps.AuthUsersConfig",
-    "calls.apps.CallsConfig",
 ]
 
 MIDDLEWARE = [
@@ -102,7 +102,7 @@ DATABASES = {
         "USER": getenv("DB_USER", "postgres"),
         "PASSWORD": DB_PASSWORD,
         "HOST": getenv("DB_HOST", "127.0.0.1"),
-        "PORT": int(getenv("DB_PORT", 5432)),
+        "PORT": int(5432 if getenv("IS_PRODUCTION", False) else getenv("DB_PORT", 5432)),
         "OPTIONS": {
             "options": "-c search_path=communications,public",
         },

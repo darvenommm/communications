@@ -1,12 +1,10 @@
 from datetime import date
-from typing import cast
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import RegexValidator
-from django.contrib.auth import get_user_model
 
-from auth_users.export.types import UserType
+from auth_users.models import User
 
 from .mixins import UuidMixin, CreatedMixin, UpdatedMixin
 from .validators import TimeRangeValidator
@@ -19,14 +17,11 @@ PASSPORT_HELP_TEXT = _('Passport number has a format like "0000-000000"')
 
 
 class Subscriber(UuidMixin, CreatedMixin, UpdatedMixin, models.Model):
-    user = cast(
-        models.OneToOneField[UserType],
-        models.OneToOneField(
-            get_user_model(),
-            on_delete=models.CASCADE,
-            related_name="subscriber",
-            unique=True,
-        ),
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name="subscriber",
+        unique=True,
     )
 
     passport = models.CharField(

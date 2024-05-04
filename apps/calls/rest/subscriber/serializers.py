@@ -7,7 +7,7 @@ from django.contrib.auth.hashers import make_password
 from rest_framework import serializers, validators
 
 from calls.models import Subscriber, Operator
-from auth_users.export.rest import (
+from auth_users.rest import (
     UserReadSerializer,
     UserCreateSerializer,
     UserUpdateSerializer,

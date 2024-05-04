@@ -1,10 +1,10 @@
-from .main import register_routes
+from .main import register_rest_routes
 
 from .user import UserReadSerializer, UserCreateSerializer, UserUpdateSerializer
 
 
 __all__ = (
-    "register_routes",
+    "register_rest_routes",
     "UserReadSerializer",
     "UserCreateSerializer",
     "UserUpdateSerializer",
