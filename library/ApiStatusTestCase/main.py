@@ -28,7 +28,7 @@ class ApiStatusTestCaseWrapper:
 
         __test_users: tuple[test.APIClient, ...] = ()
 
-        __user_fields: tuple[str, ...] = ("first_name", "last_name", "username", "password")
+        __user_fields = ("first_name", "last_name", "username", "password")
 
         @classmethod
         def setUpClass(cls) -> None:
@@ -41,6 +41,15 @@ class ApiStatusTestCaseWrapper:
             cls.__entities_url = cls.__get_entities_url()
 
             super().setUpClass()
+
+        @classmethod
+        def add_to_test_users(cls, *test_users: test.APIClient) -> None:
+            for test_user in test_users:
+                cls.__test_users += (test_user,)
+
+        @classmethod
+        def reset_test_users(cls) -> None:
+            cls.__test_users = ()
 
         def test_get_all(self) -> None:
             for index, test_user in enumerate(self.__test_users):
@@ -179,8 +188,3 @@ class ApiStatusTestCaseWrapper:
 
         def __delete_by_entity_url(self, entity_url: str) -> None:
             self.admin.delete(entity_url)
-
-        @classmethod
-        def add_to_test_users(cls, *test_users: test.APIClient) -> None:
-            for test_user in test_users:
-                cls.__test_users += (test_user,)

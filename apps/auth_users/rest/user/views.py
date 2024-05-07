@@ -2,12 +2,7 @@ from rest_framework import viewsets, permissions
 
 from auth_users.models import User
 from .permissions import UserPermission
-from .serializers import (
-    UserReadSerializer,
-    UserCreateSerializer,
-    UserUpdateSerializer,
-    UserDeleteSerializer,
-)
+from .serializers import UserDefaultSerializer, UserCreateSerializer, UserUpdateSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -20,9 +15,7 @@ class UserViewSet(viewsets.ModelViewSet):
                 self.serializer_class = UserCreateSerializer
             case "PUT" | "PATCH":
                 self.serializer_class = UserUpdateSerializer
-            case "DELETE":
-                self.serializer_class = UserDeleteSerializer
             case _:
-                self.serializer_class = UserReadSerializer
+                self.serializer_class = UserDefaultSerializer
 
         return super().get_serializer_class()

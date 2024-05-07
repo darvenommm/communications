@@ -7,9 +7,6 @@ from .admin_models import UserAdmin
 from .models import User
 
 
-TokenAdmin.raw_id_fields = ("user",)
-admin.register(User)(UserAdmin)
-
 admin.site.unregister(GroupBase)
 
 
@@ -19,3 +16,7 @@ class Group(GroupBase):
         verbose_name = _("group")
         verbose_name_plural = _("groups")
         proxy = True
+
+
+TokenAdmin.raw_id_fields = ("user",)
+admin.register(User)(UserAdmin)

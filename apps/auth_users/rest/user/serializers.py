@@ -4,7 +4,7 @@ from django.contrib.auth.hashers import make_password
 from auth_users.models import User
 
 
-class UserReadSerializer(serializers.ModelSerializer):
+class UserDefaultSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
@@ -21,36 +21,28 @@ class UserReadSerializer(serializers.ModelSerializer):
         )
 
 
-class UserDeleteSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ("id",)
-
-
 class PasswordField(serializers.CharField):
     def to_representation(self, _):
         return ""
 
 
-class UserCreateSerializer(serializers.ModelSerializer):
-    password = PasswordField(max_length=255, min_length=8)
-
-    class Meta:
-        model = User
-        fields = ("id", "username", "email", "password", "first_name", "last_name")
-
-    def create(self, validated_data):
-        validated_data["password"] = make_password(validated_data["password"])
-
-        return super().create(validated_data)
+PASSWORD_DEFAULT_PROPERTY = {"min_length": 8, "max_length": 255}
 
 
-class UserUpdateSerializer(serializers.ModelSerializer):
-    password = PasswordField(required=False, max_length=255, min_length=8)
+class UserCreateAndUpdateBaseSerializer(serializers.ModelSerializer):
+    password = PasswordField(**PASSWORD_DEFAULT_PROPERTY)
 
     class Meta:
         model = User
         fields = ("username", "email", "password", "first_name", "last_name")
+
+    def create(self, validated_data: dict[str, str]) -> User:
+        password = validated_data.pop("password")
+        user = User(**validated_data)
+        user.set_password(password)
+        user.save()
+
+        return user
 
     def update(self, user: User, validated_data: dict[str, str]) -> User:
         user.username = validated_data.get("username", user.username)
@@ -66,3 +58,11 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         user.save()
 
         return user
+
+
+class UserCreateSerializer(UserCreateAndUpdateBaseSerializer):
+    pass
+
+
+class UserUpdateSerializer(UserCreateAndUpdateBaseSerializer):
+    password = PasswordField(**PASSWORD_DEFAULT_PROPERTY, required=False)

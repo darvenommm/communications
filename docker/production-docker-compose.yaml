@@ -28,8 +28,6 @@ services:
     depends_on:
       database:
         condition: service_healthy
-    environment:
-      - SERVER_PORT=${SERVER_PORT}
     ports:
       - ${SERVER_PORT}:${SERVER_PORT}
     networks:

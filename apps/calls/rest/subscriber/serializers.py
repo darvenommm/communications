@@ -8,7 +8,7 @@ from rest_framework import serializers, validators
 
 from calls.models import Subscriber, Operator
 from auth_users.rest import (
-    UserReadSerializer,
+    UserDefaultSerializer,
     UserCreateSerializer,
     UserUpdateSerializer,
 )
@@ -21,7 +21,7 @@ class OperatorReadSerializer(serializers.ModelSerializer):
 
 
 class SubscriberReadSerializer(serializers.ModelSerializer):
-    user = UserReadSerializer()
+    user = UserDefaultSerializer()
     operators = OperatorReadSerializer(many=True)
 
     class Meta:
@@ -31,7 +31,7 @@ class SubscriberReadSerializer(serializers.ModelSerializer):
 
 
 class SubscriberReadExtendedSerializer(serializers.ModelSerializer):
-    user = UserReadSerializer()
+    user = UserDefaultSerializer()
     operators = OperatorReadSerializer(many=True)
 
     class Meta:
