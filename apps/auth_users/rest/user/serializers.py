@@ -1,5 +1,8 @@
-from rest_framework import serializers
-from django.contrib.auth.hashers import make_password
+from typing import Any, cast, Optional
+
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
+from rest_framework import serializers, request
 
 from auth_users.models import User
 
@@ -26,17 +29,43 @@ class PasswordField(serializers.CharField):
         return ""
 
 
-PASSWORD_DEFAULT_PROPERTY = {"min_length": 8, "max_length": 255}
+class UserCreateAndUpdateSerializer(serializers.ModelSerializer):
+    password_min_length = 8
+    password_max_length = 255
 
-
-class UserCreateAndUpdateBaseSerializer(serializers.ModelSerializer):
-    password = PasswordField(**PASSWORD_DEFAULT_PROPERTY)
+    password = PasswordField(
+        min_length=password_min_length,
+        max_length=password_max_length,
+        write_only=True,
+        required=False,
+    )
 
     class Meta:
         model = User
         fields = ("username", "email", "password", "first_name", "last_name")
 
-    def create(self, validated_data: dict[str, str]) -> User:
+    def validate(self, user_data: dict[str, Any]) -> dict[str, Any]:
+        self.validate_password(cast(Optional[str], user_data.get("password")))
+        return super().validate(user_data)
+
+    def validate_password(self, password: Optional[str]) -> str:
+        incorrect_password_length_message = _(
+            "Incorrect password length (min: %(min)s, max: %(max)s)"
+            % {"min": self.password_min_length, "max": self.password_max_length},
+        )
+
+        if cast(request.HttpRequest, self.context.get("request")).method == "POST":
+            if password is None:
+                raise ValidationError({"password": _("You didn't send a password value!")})
+
+            if not (self.password_min_length <= len(password) <= self.password_max_length):
+                raise ValidationError({"password": incorrect_password_length_message})
+        else:
+            password = cast(str, password)
+
+        return password
+
+    def create(self, validated_data: dict[str, Any]) -> User:
         password = validated_data.pop("password")
         user = User(**validated_data)
         user.set_password(password)
@@ -44,7 +73,7 @@ class UserCreateAndUpdateBaseSerializer(serializers.ModelSerializer):
 
         return user
 
-    def update(self, user: User, validated_data: dict[str, str]) -> User:
+    def update(self, user: User, validated_data: dict[str, Any]) -> User:
         user.username = validated_data.get("username", user.username)
         user.email = validated_data.get("email", user.email)
         user.first_name = validated_data.get("first_name", user.first_name)
@@ -58,11 +87,3 @@ class UserCreateAndUpdateBaseSerializer(serializers.ModelSerializer):
         user.save()
 
         return user
-
-
-class UserCreateSerializer(UserCreateAndUpdateBaseSerializer):
-    pass
-
-
-class UserUpdateSerializer(UserCreateAndUpdateBaseSerializer):
-    password = PasswordField(**PASSWORD_DEFAULT_PROPERTY, required=False)

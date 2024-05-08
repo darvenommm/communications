@@ -3,11 +3,7 @@ from rest_framework import viewsets, permissions
 
 from calls.models import SubscriberCall
 from .permissions import SubscriberCallPermission
-from .serializers import (
-    SubscriberCallReadSerializer,
-    SubscriberCallDeleteSerializer,
-    SubscriberCallCreateAndUpdateSerializer,
-)
+from .serializers import SubscriberCallDefaultSerializer, SubscriberCallCreateAndUpdateSerializer
 
 
 class SubscriberCallViewSet(viewsets.ModelViewSet):
@@ -20,7 +16,7 @@ class SubscriberCallViewSet(viewsets.ModelViewSet):
 
         user_pk = getattr(self.request.user, "pk")
         queryset = queryset.filter(
-            models.Q(caller__user__pk=user_pk) | models.Q(receiver__user__pk=user_pk)
+            models.Q(caller__user_id=user_pk) | models.Q(receiver__user_id=user_pk)
         )
 
         return super().filter_queryset(queryset)
@@ -29,9 +25,7 @@ class SubscriberCallViewSet(viewsets.ModelViewSet):
         match self.request.method:
             case "POST" | "PUT" | "PATCH":
                 self.serializer_class = SubscriberCallCreateAndUpdateSerializer
-            case "DELETE":
-                self.serializer_class = SubscriberCallDeleteSerializer
             case _:
-                self.serializer_class = SubscriberCallReadSerializer
+                self.serializer_class = SubscriberCallDefaultSerializer
 
         return super().get_serializer_class()

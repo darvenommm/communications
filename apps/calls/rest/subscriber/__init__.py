@@ -1,5 +1,5 @@
 from .views import SubscriberViewSet
-from .serializers import SubscriberReadSerializer
+from .serializers import SubscriberDefaultSerializer
 
 
-__all__ = ("SubscriberViewSet", "SubscriberReadSerializer")
+__all__ = ("SubscriberViewSet", "SubscriberDefaultSerializer")

@@ -5,22 +5,16 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
 from calls.models import SubscriberCall, Subscriber
-from calls.rest.subscriber import SubscriberReadSerializer
+from calls.rest.subscriber import SubscriberDefaultSerializer
 
 
-class SubscriberCallReadSerializer(serializers.ModelSerializer):
-    caller = SubscriberReadSerializer()
-    receiver = SubscriberReadSerializer()
+class SubscriberCallDefaultSerializer(serializers.ModelSerializer):
+    caller = SubscriberDefaultSerializer()
+    receiver = SubscriberDefaultSerializer()
 
     class Meta:
         model = SubscriberCall
         fields = ("id", "caller", "receiver", "start", "duration")
-
-
-class SubscriberCallDeleteSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SubscriberCall
-        fields = ("id",)
 
 
 class SubscriberCallCreateAndUpdateSerializer(serializers.ModelSerializer):
@@ -38,4 +32,4 @@ class SubscriberCallCreateAndUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SubscriberCall
-        fields = ("id", "caller", "receiver", "start", "duration")
+        fields = ("caller", "receiver", "start", "duration")
