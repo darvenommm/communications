@@ -1,0 +1,38 @@
+*,
+*::after,
+*::before {
+    box-sizing: border-box;
+}
+
+.subscribers__online {
+    position: relative;
+
+    display: inline-block;
+}
+
+.subscribers__online::before,
+.subscribers__online::after {
+    position: absolute;
+    top: 0;
+    left: 110%;
+    width: 15px;
+    height: 15px;
+}
+
+.subscribers__online::before {
+    display: none;
+
+    content: '✅';
+}
+
+.subscribers__online::after {
+    content: '⛔';
+}
+
+.subscribers__item--active .subscribers__online::before {
+    display: block;
+}
+
+.subscribers__item--active .subscribers__online::after {
+    display: none;
+}

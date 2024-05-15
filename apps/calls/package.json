@@ -1,0 +1,16 @@
+{
+  "name": "calls",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "scripts": {
+    "compile-ts:dev": "nodemon --watch ts/**/* --exec \"tsc\" --ext ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^20.12.11",
+    "nodemon": "^3.1.0",
+    "typescript": "^5.4.5"
+  }
+}

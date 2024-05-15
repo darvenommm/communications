@@ -21,9 +21,10 @@ services:
     container_name: communications-production-server
     build:
       context: ./
-      dockerfile: ./docker/Dockerfile
+      dockerfile: ./docker/run-server-production-dockerfile
       args:
         - DB_HOST=database
+        - REDIS_HOST=redis
     env_file: .env
     depends_on:
       database:

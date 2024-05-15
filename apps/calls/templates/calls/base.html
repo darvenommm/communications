@@ -1,0 +1,19 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="{{ language|default:"en" }}">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title|default:"Calls site" }}</title>
+    <script src="{% static 'calls/js/online-subscribers.js' %}" defer></script>
+    <link rel="stylesheet" href="{% static 'calls/styles/styles.css' %}">
+    {% block head %}{% endblock head %}
+  </head>
+  <body>
+    <header class="header"></header>
+    <main>
+    {% block content %}{% endblock content %}
+    </main>
+  </body>
+</html>

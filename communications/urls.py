@@ -35,11 +35,12 @@ for register in registers:
 
 
 urlpatterns = [
+    path(settings.REST_FRAMEWORK_API_PATH, include(router.urls)),
+    path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
+    path("api-token-auth/", views.obtain_auth_token),
     *i18n_patterns(
         path("admin/", admin.site.urls),
-        path(settings.REST_FRAMEWORK_API_PATH, include(router.urls)),
-        path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
-        path("api-token-auth/", views.obtain_auth_token),
+        path("", include("calls.urls", namespace="calls")),
         prefix_default_language=False,
     ),
 ]

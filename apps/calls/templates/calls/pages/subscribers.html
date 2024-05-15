@@ -1,0 +1,43 @@
+{% extends "calls/base.html" %}
+{% load static %}
+
+{% block head %}
+<script src="{% static 'calls/js/subscribers.js' %}" defer></script>
+{% endblock head %}
+
+{% block content %}
+<h1>All subscribers</h1>
+<div class="subscribers">
+  {% if subscribers %}
+  <ul class="subscribers__list">
+  {% for subscriber in subscribers %}
+  {% with user=subscriber.user %}
+  {% with operators=subscriber.operators.all %}
+    <li
+      class="subscribers__item"
+      data-user-id="{{ user.id }}"
+      data-is-online="false"
+      data-operators="[{{ operators|join:"," }}]"
+    >
+      <p class="subscribers__online">Online</p>
+      <p class="subscribers__property">Full name: {{ user.full_name }}</p>
+      <p class="subscribers__property">Username: {{ user.username }}</p>
+      {% if operators %}
+      <ul class="subscribers__operators">
+      {% for operator in subscriber.operators.all %}
+        <li class="subscribers__operator">Operator name: {{ operator.title }}</li>
+      {% endfor %}
+      </ul>
+      {% else %}
+      <p class="subscribers__no_operators">Don't exist any operators</p>
+      {% endif %}
+    </li>
+  {% endwith %}
+  {% endwith %}
+  {% endfor %}
+  </ul>
+  {% else %}
+  <p class="subscribers__no_subscribers">Don't exist any subscribers</p>
+  {% endif %}
+</div>
+{% endblock content %}

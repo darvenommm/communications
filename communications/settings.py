@@ -35,14 +35,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-)+&c!1l#ftfs@j=8dqe1@fy^r1r-h0=qdc9!g))u5s(*ai)+0b"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = getenv("IS_PRODUCTION", True)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+]
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    "daphne",
     "auth_users.apps.AuthUsersConfig",
     "calls.apps.CallsConfig",
     "django.contrib.admin",
@@ -84,8 +87,22 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "communications.wsgi.application"
 
+WSGI_APPLICATION = "communications.wsgi.application"
+ASGI_APPLICATION = "communications.asgi.application"
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [
+                (
+                    "127.0.0.1",
+                    int(getenv("REDIS_PORT", 6379)),
+                )
+            ],
+        },
+    },
+}
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
