@@ -38,6 +38,7 @@ SECRET_KEY = "django-insecure-)+&c!1l#ftfs@j=8dqe1@fy^r1r-h0=qdc9!g))u5s(*ai)+0b
 DEBUG = getenv("IS_PRODUCTION", True)
 
 ALLOWED_HOSTS = [
+    "localhost",
     "127.0.0.1",
 ]
 

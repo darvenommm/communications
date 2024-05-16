@@ -6,8 +6,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ title|default:"Calls site" }}</title>
-    <script src="{% static 'calls/js/online-subscribers.js' %}" defer></script>
-    <link rel="stylesheet" href="{% static 'calls/styles/styles.css' %}">
+    <script src="{% static 'calls/js/online-subscribers.js' %}?{% now "SHORT_DATETIME_FORMAT" %}" defer></script>
+    <link rel="stylesheet" href="{% static 'calls/styles/styles.css' %}?{% now "SHORT_DATETIME_FORMAT" %}">
     {% block head %}{% endblock head %}
   </head>
   <body>
@@ -15,5 +15,17 @@
     <main>
     {% block content %}{% endblock content %}
     </main>
+
+    <div class="notify">
+      <p class="notify__text"></p>
+    </div>
+
+    <div class="dialog">
+      <p class="dialog__text"></p>
+      <div class="dialog__buttons">
+        <button class="dialog__yes" type="button">Yes</button>
+        <button class="dialog__no" type="button">No</button>
+      </div>
+    </div>
   </body>
 </html>

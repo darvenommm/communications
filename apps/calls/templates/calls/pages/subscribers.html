@@ -8,20 +8,22 @@
 {% block content %}
 <h1>All subscribers</h1>
 <div class="subscribers">
+  {% if user.is_authenticated %}
   {% if subscribers %}
   <ul class="subscribers__list">
   {% for subscriber in subscribers %}
-  {% with user=subscriber.user %}
-  {% with operators=subscriber.operators.all %}
+  {% with current_user=subscriber.user operators=subscriber.operators.all %}
+  {% if user.id != current_user.id %}
     <li
       class="subscribers__item"
-      data-user-id="{{ user.id }}"
+      data-user-id="{{ current_user.id }}"
       data-is-online="false"
       data-operators="[{{ operators|join:"," }}]"
+      data-user-full-name="{{ current_user.full_name }}"
     >
       <p class="subscribers__online">Online</p>
-      <p class="subscribers__property">Full name: {{ user.full_name }}</p>
-      <p class="subscribers__property">Username: {{ user.username }}</p>
+      <p class="subscribers__property">Full name: {{ current_user.full_name }}</p>
+      <p class="subscribers__property">Username: {{ current_user.username }}</p>
       {% if operators %}
       <ul class="subscribers__operators">
       {% for operator in subscriber.operators.all %}
@@ -29,15 +31,19 @@
       {% endfor %}
       </ul>
       {% else %}
-      <p class="subscribers__no_operators">Don't exist any operators</p>
+      <p class="subscribers__no-operators">Don't exist any operators</p>
       {% endif %}
+      <button class="subscribers__call-button" type="button" disabled>Call this user</button>
     </li>
-  {% endwith %}
+  {% endif %}
   {% endwith %}
   {% endfor %}
   </ul>
   {% else %}
-  <p class="subscribers__no_subscribers">Don't exist any subscribers</p>
+  <p class="subscribers__no-subscribers">Don't exist any subscribers</p>
+  {% endif %}
+  {% else %}
+  <p class="subscribers__not-auth">You should login to the account!</p>
   {% endif %}
 </div>
 {% endblock content %}
