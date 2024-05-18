@@ -6,8 +6,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ title|default:"Calls site" }}</title>
-    <script src="{% static 'calls/js/online-subscribers.js' %}?{% now "SHORT_DATETIME_FORMAT" %}" defer></script>
     <link rel="stylesheet" href="{% static 'calls/styles/styles.css' %}?{% now "SHORT_DATETIME_FORMAT" %}">
+    <script src="{% static 'calls/js/call_offers.js' %}" defer></script>
     {% block head %}{% endblock head %}
   </head>
   <body>
@@ -27,5 +27,8 @@
         <button class="dialog__no" type="button">No</button>
       </div>
     </div>
+    <script>
+      window.callOffersWebSocket = new WebSocket(`ws://${location.host}/call-offers/`);
+    </script>
   </body>
 </html>

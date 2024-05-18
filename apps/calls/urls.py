@@ -7,5 +7,5 @@ app_name = "calls"
 
 urlpatterns = [
     path("subscribers/", SubscribersView.as_view(), name="subscribers"),
-    path("call-room/", CallRoomView.as_view(), name="call_room"),
+    path("call-room/<uuid:call_room_id>", CallRoomView.as_view(), name="call_room"),
 ]

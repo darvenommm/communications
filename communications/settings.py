@@ -89,20 +89,27 @@ TEMPLATES = [
 ]
 
 
+REDIS_PORT = int(getenv("REDIS_PORT", 6379))
+
 WSGI_APPLICATION = "communications.wsgi.application"
 ASGI_APPLICATION = "communications.asgi.application"
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [
-                (
-                    "127.0.0.1",
-                    int(getenv("REDIS_PORT", 6379)),
-                )
-            ],
+            "hosts": [("127.0.0.1", REDIS_PORT)],
         },
     },
+}
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": f"redis://127.0.0.1:{REDIS_PORT}/",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
+    }
 }
 
 # Database

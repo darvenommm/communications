@@ -25,6 +25,7 @@ services:
       args:
         - DB_HOST=database
         - REDIS_HOST=redis
+    command: command
     env_file: .env
     depends_on:
       database:

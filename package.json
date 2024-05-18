@@ -1,0 +1,23 @@
+{
+  "name": "communications",
+  "version": "1.0.0",
+  "description": "The developments tools for this django project",
+  "scripts": {
+    "compile-ts:dev": "nodemon --exec \"cross-env MODE=development webpack build --config ./webpack/webpack.config.ts\" -e ts, -w",
+    "compile-ts:prod": "cross-env MODE=production webpack build --config ./webpack/webpack.config.ts"
+  },
+  "keywords": [],
+  "author": "Romodanov Denis (@darvenommm)",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.12.12",
+    "@types/webpack": "^5.28.5",
+    "cross-env": "^7.0.3",
+    "nodemon": "^3.1.0",
+    "ts-loader": "^9.5.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5",
+    "webpack": "^5.91.0",
+    "webpack-cli": "^5.1.4"
+  }
+}

@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block head %}
-<script src="{% static 'calls/js/subscribers.js' %}" defer></script>
+<script src="{% static 'calls/js/online_subscribers.js' %}" defer></script>
 {% endblock head %}
 
 {% block content %}
@@ -16,10 +16,10 @@
   {% if user.id != current_user.id %}
     <li
       class="subscribers__item"
-      data-user-id="{{ current_user.id }}"
+      data-subscriber-id="{{ current_user.id }}"
       data-is-online="false"
       data-operators="[{{ operators|join:"," }}]"
-      data-user-full-name="{{ current_user.full_name }}"
+      data-subscriber-full-name="{{ current_user.full_name }}"
     >
       <p class="subscribers__online">Online</p>
       <p class="subscribers__property">Full name: {{ current_user.full_name }}</p>
