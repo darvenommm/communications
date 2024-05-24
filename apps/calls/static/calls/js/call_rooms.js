@@ -30,8 +30,6 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const room_id = location.pathname.split('/').at(-1);
-const callRoomsWebSocket = new WebSocket(`ws://${location.host}/call-rooms/${room_id}`);
 const localeVideo = document.querySelector('.video__current-user');
 const remoteVideo = document.querySelector('.video__another-user');
 if (!localeVideo) {
@@ -40,41 +38,112 @@ if (!localeVideo) {
 if (!remoteVideo) {
     throw Error('Not found remote video container!');
 }
-let localStream;
-let remoteStream;
 const servers = {
-    iceServers: [{ urls: ['stun:stun1.l.google.com:19302'] }],
+    iceServers: [{ urls: ['stun:stun.l.google.com:19302'] }],
 };
-const createOffer = () => __awaiter(void 0, void 0, void 0, function* () {
-    localStream = yield navigator.mediaDevices.getUserMedia({ audio: true, video: { facingMode: 'user' } });
-    localeVideo.srcObject = localStream;
-    remoteStream = new MediaStream();
-    remoteVideo.srcObject = remoteStream;
-    const peerConnection = new RTCPeerConnection(servers);
-    localStream.getTracks().forEach((track) => {
-        peerConnection.addTrack(track);
+const peerConnection = new RTCPeerConnection(servers);
+peerConnection.onconnectionstatechange = (event) => {
+    console.log(event);
+    console.log('change ebuchiq state');
+};
+setInterval(() => {
+    console.log(peerConnection.signalingState);
+}, 50);
+const getLocalMediaStream = () => __awaiter(void 0, void 0, void 0, function* () {
+    return yield navigator.mediaDevices.getUserMedia({
+        audio: true,
+        video: {
+            width: { min: 640, ideal: 1920, max: 1920 },
+            height: { min: 480, ideal: 1080, max: 1080 },
+            facingMode: 'user',
+        },
     });
-    peerConnection.ontrack = (event) => {
-        event.streams[0].getTracks().forEach((track) => {
-            remoteStream.addTrack(track);
-        });
-    };
+});
+const createLocaleMediaStream = () => __awaiter(void 0, void 0, void 0, function* () {
+    let localMediaStream;
+    try {
+        localMediaStream = yield getLocalMediaStream();
+    }
+    catch (error) {
+        console.error(error);
+        throw error;
+    }
+    localeVideo.srcObject = localMediaStream;
+    return localMediaStream;
+});
+const createRemoteMediaStream = () => {
+    const remoteMediaStream = new MediaStream();
+    remoteVideo.srcObject = remoteMediaStream;
+    return remoteMediaStream;
+};
+const createOffer = (webSocket) => __awaiter(void 0, void 0, void 0, function* () {
+    let isSended = false;
     peerConnection.onicecandidate = () => __awaiter(void 0, void 0, void 0, function* () {
-        console.log(peerConnection.localDescription);
+        if (isSended) {
+            return;
+        }
+        webSocket.send(JSON.stringify({
+            type: "offer.send" /* ActionType.offerSend */,
+            data: offer,
+        }));
+        isSended = true;
     });
     const offer = yield peerConnection.createOffer();
-    yield peerConnection.setLocalDescription(offer);
-    console.log(offer);
+    peerConnection.setLocalDescription(offer);
 });
-callRoomsWebSocket.onmessage = (_a) => __awaiter(void 0, [_a], void 0, function* ({ data }) {
-    const parsed_data = JSON.parse(data);
-    switch (parsed_data.type) {
-        case "offer" /* ActionType.offer */: {
-            yield createOffer();
-            break;
+const createAnswer = (webSocket, offer) => __awaiter(void 0, void 0, void 0, function* () {
+    let isSended = false;
+    peerConnection.onicecandidate = () => {
+        if (isSended) {
+            return;
         }
-    }
+        webSocket.send(JSON.stringify({ type: "answer.send" /* ActionType.answerSend */, data: answer }));
+        isSended = true;
+    };
+    yield peerConnection.setRemoteDescription(offer);
+    const answer = yield peerConnection.createAnswer();
+    yield peerConnection.setLocalDescription(answer);
 });
+const setAnswer = (answer) => __awaiter(void 0, void 0, void 0, function* () {
+    yield peerConnection.setRemoteDescription(answer);
+    setTimeout(() => console.log(peerConnection.connectionState, peerConnection.localDescription, peerConnection.remoteDescription, peerConnection.signalingState), 2000);
+});
+const createWebSocket = () => __awaiter(void 0, void 0, void 0, function* () {
+    const room_id = location.pathname.split('/').at(-1);
+    const callRoomsWebSocket = new WebSocket(`ws://${location.host}/call-rooms/${room_id}/`);
+    callRoomsWebSocket.onmessage = (_a) => __awaiter(void 0, [_a], void 0, function* ({ data }) {
+        const parsed_data = JSON.parse(data);
+        console.log(parsed_data);
+        switch (parsed_data.type) {
+            case "offer.create" /* ActionType.offerCreate */: {
+                yield createOffer(callRoomsWebSocket);
+                break;
+            }
+            case "answer.create" /* ActionType.answerCreate */: {
+                yield createAnswer(callRoomsWebSocket, parsed_data['data']);
+                break;
+            }
+            case "answer.get" /* ActionType.answerGet */: {
+                yield setAnswer(parsed_data['data']);
+                break;
+            }
+        }
+    });
+});
+const init = () => __awaiter(void 0, void 0, void 0, function* () {
+    const localMediaStream = yield createLocaleMediaStream();
+    const remoteMediaStream = createRemoteMediaStream();
+    localMediaStream.getTracks().forEach((track) => {
+        peerConnection.addTrack(track, localMediaStream);
+    });
+    peerConnection.ontrack = ({ streams }) => {
+        streams[0].getTracks().forEach((track) => {
+            remoteMediaStream.addTrack(track);
+        });
+    };
+    yield createWebSocket();
+});
+init();
 
 
 /******/ })()

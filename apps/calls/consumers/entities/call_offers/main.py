@@ -7,6 +7,7 @@ from calls.consumers.storages import CallOffersStorage, CallRoomsStorage
 
 
 class CallOffersConsumer(AsyncConsumerHelper):
+    user_unique_prefix = "call_offers"
     offers_storage = CallOffersStorage()
     rooms_storage = CallRoomsStorage()
 
@@ -16,12 +17,14 @@ class CallOffersConsumer(AsyncConsumerHelper):
         except ValueError:
             return
 
-        await self.get_channel_layer().group_add(str(user.id), self.channel_name)
+        user_group = self.create_unique_group(str(user.id))
+        await self.get_channel_layer().group_add(user_group, self.channel_name)
         await self.accept()
 
     async def disconnect(self, _: int) -> None:
         user = self.get_user()
-        await self.get_channel_layer().group_discard(str(user.id), self.channel_name)
+        user_group = self.create_unique_group(str(user.id))
+        await self.get_channel_layer().group_discard(user_group, self.channel_name)
 
     async def receive_json(self, received_content: dict[str, Any]) -> None:
         match received_content.get("type", ""):
@@ -41,7 +44,7 @@ class CallOffersConsumer(AsyncConsumerHelper):
         self.offers_storage.add(from_user_id, to_user_id)
 
         await self.get_channel_layer().group_send(
-            to_user_id,
+            self.create_unique_group(to_user_id),
             {
                 "type": ActionType.offer_connection,
                 "data": {"id": from_user_id, "full_name": from_user.full_name},
@@ -57,7 +60,7 @@ class CallOffersConsumer(AsyncConsumerHelper):
         if self.offers_storage.get(from_user_id) == to_user_id:
             self.offers_storage.remove(from_user_id)
             await self.get_channel_layer().group_send(
-                from_user_id,
+                self.create_unique_group(from_user_id),
                 {"type": ActionType.offer_cancel},
             )
 
@@ -74,7 +77,7 @@ class CallOffersConsumer(AsyncConsumerHelper):
             self.rooms_storage.add(call_room_id, from_user_id, to_user_id)
             for user_id in (from_user_id, to_user_id):
                 await self.get_channel_layer().group_send(
-                    user_id,
+                    self.create_unique_group(user_id),
                     {"type": ActionType.offer_success, "data": call_room_id},
                 )
 

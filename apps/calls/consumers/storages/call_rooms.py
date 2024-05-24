@@ -26,8 +26,7 @@ class CallRoomsStorage(RedisStorage):
         rooms[room_id] = {
             "ids": [from_subscriber_id, to_subscriber_id],
             "start_time": None,
-            from_subscriber_id: None,
-            to_subscriber_id: None,
+            "offer": None,
         }
 
         cache.set(self.key, rooms)
@@ -50,11 +49,11 @@ class CallRoomsStorage(RedisStorage):
         rooms[room_id]["start_time"] = str(datetime.datetime.now())
         cache.set(self.key, rooms)
 
-    def set_subscriber_offer(self, room_id: str, subscriber_id: str, offer: dict) -> None:
+    def set_offer(self, room_id: str, offer: dict) -> None:
         rooms = self.get_all()
 
         if not rooms.get(room_id):
             return
 
-        rooms[room_id][subscriber_id] = offer
+        rooms[room_id]["offer"] = offer
         cache.set(self.key, rooms)
