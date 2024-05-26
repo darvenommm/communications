@@ -46,25 +46,6 @@ const showNotify = (message, timeout = Infinity) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   discardOnlineSubscriber: () => (/* reexport safe */ _subscribers__WEBPACK_IMPORTED_MODULE_0__.discardOnlineSubscriber),
-/* harmony export */   markOnlineSubscriber: () => (/* reexport safe */ _subscribers__WEBPACK_IMPORTED_MODULE_0__.markOnlineSubscriber),
-/* harmony export */   markOnlineSubscribers: () => (/* reexport safe */ _subscribers__WEBPACK_IMPORTED_MODULE_0__.markOnlineSubscribers),
-/* harmony export */   setCallButtonClickHandler: () => (/* reexport safe */ _subscribers__WEBPACK_IMPORTED_MODULE_0__.setCallButtonClickHandler)
-/* harmony export */ });
-/* harmony import */ var _subscribers__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./subscribers */ "./apps/calls/ts/components/subscribers/subscribers.ts");
-
-
-
-/***/ }),
-
-/***/ "./apps/calls/ts/components/subscribers/subscribers.ts":
-/*!*************************************************************!*\
-  !*** ./apps/calls/ts/components/subscribers/subscribers.ts ***!
-  \*************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   discardOnlineSubscriber: () => (/* binding */ discardOnlineSubscriber),
 /* harmony export */   markOnlineSubscriber: () => (/* binding */ markOnlineSubscriber),
 /* harmony export */   markOnlineSubscribers: () => (/* binding */ markOnlineSubscribers),

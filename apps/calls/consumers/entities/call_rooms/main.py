@@ -1,6 +1,6 @@
 from typing import Any, cast
 
-from .types import ActionType
+from .types import ActionType, WhoAmI
 from calls.consumers.helpers import AsyncConsumerHelper
 from calls.consumers.storages import CallRoomsStorage
 
@@ -19,39 +19,36 @@ class CallRoomsConsumer(AsyncConsumerHelper):
             return
 
         room = self.rooms_storage.get(self.get_room_id())
-
         if (not room) or (user_id not in room.get("ids", [])):
             return
 
-        user_group_name = self.create_unique_group(user_id)
-        await self.get_channel_layer().group_add(user_group_name, self.channel_name)
         await self.accept()
 
-        (from_user_id, to_user_id) = cast(list[str], room["ids"])
-
-        if user_id == from_user_id:
-            await self.send_json({"type": ActionType.offer_create})
-
-        if user_id == to_user_id and room["offer"]:
-            await self.get_channel_layer().group_send(
-                self.create_unique_group(to_user_id),
-                {"type": ActionType.offer_send, "data": room["offer"]},
-            )
+        from_user_id = cast(list[str], room["ids"])[0]
+        await self.send_json(
+            {
+                "type": ActionType.who,
+                "data": WhoAmI.starter if user_id == from_user_id else WhoAmI.answerer,
+            }
+        )
 
     async def disconnect(self, _: int) -> None:
         self.rooms_storage.remove(self.get_room_id())
-
-        user_id = str(self.get_user().id)
-        await self.get_channel_layer().group_discard(
-            self.create_unique_group(user_id), self.channel_name
-        )
 
     async def receive_json(self, received_content: dict[str, Any]) -> None:
         match received_content.get("type"):
             case ActionType.offer_send:
                 await self.handle_offer_send(received_content)
             case ActionType.answer_send:
-                await self.handler_answer_send(received_content)
+                await self.handle_answer_send(received_content)
+            case ActionType.candidate_send:
+                await self.handle_candidate_send(received_content)
+            case ActionType.offer_get:
+                await self.handle_offer_get()
+            case ActionType.answer_get:
+                await self.handle_answer_get()
+            case ActionType.candidate_get:
+                await self.handle_candidate_get()
 
     async def handle_offer_send(self, received_content: dict[str, Any]) -> None:
         room_id = self.get_room_id()
@@ -60,28 +57,52 @@ class CallRoomsConsumer(AsyncConsumerHelper):
         if not room:
             return
 
-        to_user_id = cast(list[str], room.get("ids"))[1]
         self.rooms_storage.set_offer(room_id, received_content["data"])
 
-        await self.get_channel_layer().group_send(
-            self.create_unique_group(to_user_id),
-            received_content,
-        )
+    async def handle_answer_send(self, received_content: dict[str, Any]) -> None:
+        room_id = self.get_room_id()
+        room = self.rooms_storage.get(room_id)
 
-    async def handler_answer_send(self, received_content: dict[str, Any]) -> None:
+        if not room:
+            return
+
+        self.rooms_storage.set_answer(room_id, received_content["data"])
+
+    async def handle_offer_get(self) -> None:
         room = self.rooms_storage.get(self.get_room_id())
 
         if not room:
             return
 
-        from_user_id = cast(list[str], room.get("ids"))[0]
-        await self.get_channel_layer().group_send(
-            self.create_unique_group(from_user_id),
-            received_content,
-        )
+        await self.send_json({"type": ActionType.offer_get, "data": room["offer"]})
 
-    async def offer_send(self, received_content: dict[str, Any]) -> None:
-        await self.send_json({"type": ActionType.answer_create, "data": received_content["data"]})
+    async def handle_answer_get(self) -> None:
+        room = self.rooms_storage.get(self.get_room_id())
 
-    async def answer_send(self, received_content: dict[str, Any]) -> None:
-        await self.send_json({"type": ActionType.answer_get, "data": received_content["data"]})
+        if not room:
+            return
+
+        await self.send_json({"type": ActionType.answer_get, "data": room["answer"]})
+
+    async def handle_candidate_send(self, received_content: dict[str, Any]) -> None:
+        user = self.get_user()
+        room_id = self.get_room_id()
+        room = self.rooms_storage.get(room_id)
+
+        if not room:
+            return
+
+        need_user_id = list(filter(lambda user_id: user_id != str(user.id), room["ids"]))[0]
+        self.rooms_storage.add_candidate(room_id, need_user_id, received_content["data"])
+
+    async def handle_candidate_get(self) -> None:
+        user_id = str(self.get_user().id)
+        room_id = self.get_room_id()
+        room = self.rooms_storage.get(room_id)
+
+        if not room:
+            return
+
+        candidates = self.rooms_storage.get_candidates(room_id, user_id)
+
+        await self.send_json({"type": ActionType.candidate_get, "data": candidates})

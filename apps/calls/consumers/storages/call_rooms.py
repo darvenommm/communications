@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, cast
 import datetime
 
 from django.core.cache import cache
@@ -27,6 +27,11 @@ class CallRoomsStorage(RedisStorage):
             "ids": [from_subscriber_id, to_subscriber_id],
             "start_time": None,
             "offer": None,
+            "answer": None,
+            "candidates": {
+                from_subscriber_id: [],
+                to_subscriber_id: [],
+            },
         }
 
         cache.set(self.key, rooms)
@@ -57,3 +62,36 @@ class CallRoomsStorage(RedisStorage):
 
         rooms[room_id]["offer"] = offer
         cache.set(self.key, rooms)
+
+    def set_answer(self, room_id: str, answer: dict) -> None:
+        rooms = self.get_all()
+
+        if not rooms.get(room_id):
+            return
+
+        rooms[room_id]["answer"] = answer
+        cache.set(self.key, rooms)
+
+    def add_candidate(self, room_id: str, to: str, candidate: dict) -> None:
+        rooms = self.get_all()
+        room = rooms.get(room_id)
+
+        if not room or (to not in room["ids"]):
+            return
+
+        cast(list, rooms[room_id]["candidates"][to]).append(candidate)
+        cache.set(self.key, rooms)
+
+    def get_candidates(self, room_id: str, to: str) -> list[dict]:
+        rooms = self.get_all()
+        room = rooms.get(room_id)
+
+        if not room or (to not in room["ids"]):
+            return []
+
+        candidates = cast(list, rooms[room_id]["candidates"][to]).copy()
+        rooms[room_id]["candidates"][to] = []
+
+        cache.set(self.key, rooms)
+
+        return candidates

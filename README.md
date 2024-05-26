@@ -11,3 +11,5 @@
 
 
 **The last two variables are used in the production mode**!
+
+Also need certificates mkcert

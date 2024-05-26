@@ -35,13 +35,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-)+&c!1l#ftfs@j=8dqe1@fy^r1r-h0=qdc9!g))u5s(*ai)+0b"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = getenv("IS_PRODUCTION", True)
+IS_PRODUCTION = getenv("IS_PRODUCTION", False)
+IS_DEVELOPMENT = not IS_PRODUCTION
 
-ALLOWED_HOSTS = [
-    "*"
-    # "localhost",
-    # "127.0.0.1",
-]
+DEBUG = IS_DEVELOPMENT
+
+
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -128,7 +128,7 @@ DATABASES = {
         "USER": getenv("DB_USER", "postgres"),
         "PASSWORD": DB_PASSWORD,
         "HOST": getenv("DB_HOST", "127.0.0.1"),
-        "PORT": int(5432 if getenv("IS_PRODUCTION", False) else getenv("DB_PORT", 5432)),
+        "PORT": int(5432 if IS_PRODUCTION else getenv("DB_PORT", 5432)),
         "OPTIONS": {
             "options": "-c search_path=communications,public",
         },
@@ -197,7 +197,7 @@ REST_FRAMEWORK = {
 
 REST_FRAMEWORK_API_PATH = "api/"
 
-if DEBUG:
+if IS_DEVELOPMENT:
     REST_FRAMEWORK.get("DEFAULT_RENDERER_CLASSES", []).append(
         "rest_framework.renderers.BrowsableAPIRenderer",
     )
