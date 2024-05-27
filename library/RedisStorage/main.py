@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, Self
+from typing import Any, Self, Optional
 
 from django.core.cache import cache
 
@@ -15,6 +15,9 @@ class RedisStorage(ABC):
         cache.set(cls.key, {})
         cls.__current = super().__new__(cls, *args, **kwargs)
         return cls.__current
+
+    def cache_set(self, new_value: Any, timeout: Optional[int] = None) -> None:
+        cache.set(self.key, new_value, timeout)
 
     @abstractmethod
     def __init__(self) -> None:

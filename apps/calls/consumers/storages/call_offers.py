@@ -19,7 +19,7 @@ class CallOffersStorage(RedisStorage):
             return
 
         offers[from_subscriber_id] = to_subscriber_id
-        cache.set(self.key, offers)
+        self.cache_set(offers)
 
     def remove(self, from_subscriber_id: str) -> None:
         offers = self.get_all()
@@ -28,7 +28,7 @@ class CallOffersStorage(RedisStorage):
             return
 
         del offers[from_subscriber_id]
-        cache.set(self.key, offers)
+        self.cache_set(offers)
 
     def get(self, from_subscriber_id: str) -> str:
         offers = self.get_all()

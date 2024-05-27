@@ -34,7 +34,7 @@ class CallRoomsStorage(RedisStorage):
             },
         }
 
-        cache.set(self.key, rooms)
+        self.cache_set(rooms)
 
     def remove(self, room_id: str) -> None:
         rooms = self.get_all()
@@ -43,7 +43,7 @@ class CallRoomsStorage(RedisStorage):
             return
 
         del rooms[room_id]
-        cache.set(self.key, rooms)
+        self.cache_set(rooms)
 
     def set_start(self, room_id: str) -> None:
         rooms = self.get_all()
@@ -52,7 +52,7 @@ class CallRoomsStorage(RedisStorage):
             return
 
         rooms[room_id]["start_time"] = str(datetime.datetime.now())
-        cache.set(self.key, rooms)
+        self.cache_set(rooms)
 
     def set_offer(self, room_id: str, offer: dict) -> None:
         rooms = self.get_all()
@@ -61,7 +61,7 @@ class CallRoomsStorage(RedisStorage):
             return
 
         rooms[room_id]["offer"] = offer
-        cache.set(self.key, rooms)
+        self.cache_set(rooms)
 
     def set_answer(self, room_id: str, answer: dict) -> None:
         rooms = self.get_all()
@@ -80,7 +80,7 @@ class CallRoomsStorage(RedisStorage):
             return
 
         cast(list, rooms[room_id]["candidates"][to]).append(candidate)
-        cache.set(self.key, rooms)
+        self.cache_set(rooms)
 
     def get_candidates(self, room_id: str, to: str) -> list[dict]:
         rooms = self.get_all()
@@ -92,6 +92,6 @@ class CallRoomsStorage(RedisStorage):
         candidates = cast(list, rooms[room_id]["candidates"][to]).copy()
         rooms[room_id]["candidates"][to] = []
 
-        cache.set(self.key, rooms)
+        self.cache_set(rooms)
 
         return candidates

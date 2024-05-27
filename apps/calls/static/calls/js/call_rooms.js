@@ -10,6 +10,9 @@
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   addCloseCallHandler: () => (/* binding */ addCloseCallHandler),
+/* harmony export */   addHideCallHandler: () => (/* binding */ addHideCallHandler),
+/* harmony export */   addMuteCallHandler: () => (/* binding */ addMuteCallHandler),
 /* harmony export */   createAndSetLocalMediaStream: () => (/* binding */ createAndSetLocalMediaStream),
 /* harmony export */   createAndSetRemoteMediaStream: () => (/* binding */ createAndSetRemoteMediaStream)
 /* harmony export */ });
@@ -24,17 +27,27 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 };
 const localeVideo = document.querySelector('.video__current-user');
 const remoteVideo = document.querySelector('.video__another-user');
+const videoControlsContainer = document.querySelector('.call-controls');
+if (!videoControlsContainer) {
+    throw Error('Not found video controls container!');
+}
 if (!localeVideo) {
     throw Error('Not found locale video container!');
 }
 if (!remoteVideo) {
     throw Error('Not found remote video container!');
 }
+const closeButton = videoControlsContainer.querySelector('.call-controls__close');
+const muteButton = videoControlsContainer.querySelector('.call-controls__mute');
+const hideButton = videoControlsContainer.querySelector('.call-controls__hide');
+if (!closeButton || !muteButton || !hideButton) {
+    throw Error('Not found some controls buttons in video controls container!');
+}
 const CONSTRAINTS = {
     audio: true,
     video: {
-        width: { min: 640, ideal: 1920, max: 1920 },
-        height: { min: 480, ideal: 1080, max: 1080 },
+        width: { min: 640, ideal: 720, max: 720 },
+        height: { min: 480, ideal: 720, max: 720 },
         facingMode: 'user',
     },
 };
@@ -54,6 +67,30 @@ const createAndSetLocalMediaStream = () => __awaiter(void 0, void 0, void 0, fun
 });
 const createAndSetRemoteMediaStream = () => {
     return (remoteVideo.srcObject = new MediaStream());
+};
+const addCloseCallHandler = (callback) => {
+    closeButton.onclick = () => {
+        callback ? callback() : null;
+        location.href = window.homePath;
+    };
+};
+const addMuteCallHandler = (localMediaStream) => {
+    muteButton.onclick = () => {
+        const audioTrack = localMediaStream.getTracks().find((track) => track.kind === 'audio');
+        if (!audioTrack) {
+            return;
+        }
+        audioTrack.enabled = !audioTrack.enabled;
+    };
+};
+const addHideCallHandler = (localMediaStream) => {
+    hideButton.onclick = () => {
+        const videoTrack = localMediaStream.getTracks().find((track) => track.kind === 'video');
+        if (!videoTrack) {
+            return;
+        }
+        videoTrack.enabled = !videoTrack.enabled;
+    };
 };
 
 
@@ -141,24 +178,25 @@ var __asyncValues = (undefined && undefined.__asyncValues) || function (o) {
 };
 
 const RTC_CONFIGURATION = {
-    iceServers: [
-        {
-            urls: ['stun:stun2.1.google.com:19302'],
-        },
-    ],
+    iceServers: [{ urls: ['stun:stun2.1.google.com:19302'] }],
 };
 const peerConnection = new RTCPeerConnection(RTC_CONFIGURATION);
+let callRoomsWebSocket;
+let offer;
+let answer;
+let isClose = false;
 peerConnection.addEventListener('icecandidate', ({ candidate }) => {
     if (candidate) {
         console.log('Sending ICE candidate:', candidate);
         callRoomsWebSocket.send(JSON.stringify({ type: "candidate.send" /* ActionType.candidateSend */, data: candidate }));
     }
 });
-peerConnection.addEventListener('iceconnectionstatechange', () => console.log('ICE connection state:', peerConnection.iceConnectionState));
-peerConnection.addEventListener('signalingstatechange', () => console.log('Signaling state:', peerConnection.signalingState));
-let callRoomsWebSocket;
-let offer;
-let answer;
+peerConnection.addEventListener('iceconnectionstatechange', () => {
+    if (['connecting', 'connected'].includes(peerConnection.connectionState)) {
+        callRoomsWebSocket.close();
+        isClose = true;
+    }
+});
 const startCommunication = () => {
     console.log('Start communication');
     const roomId = location.pathname.split('/').at(-1);
@@ -232,7 +270,7 @@ const setOffer = (receiverOffer) => __awaiter(void 0, void 0, void 0, function* 
     offer = new RTCSessionDescription(receiverOffer);
     yield peerConnection.setRemoteDescription(offer);
     console.log('Set remote offer');
-    loopSends(getCandidate, 2000);
+    loopSends(getCandidate, 3000);
 });
 const sendAnswer = () => __awaiter(void 0, void 0, void 0, function* () {
     console.log('Send answer');
@@ -244,7 +282,7 @@ const setAnswer = (receivedAnswer) => __awaiter(void 0, void 0, void 0, function
     console.log('Setting answer');
     answer = new RTCSessionDescription(receivedAnswer);
     yield peerConnection.setRemoteDescription(answer);
-    loopSends(getCandidate, 2000);
+    loopSends(getCandidate, 3000);
 });
 const loopSends = (callback, time = 500) => {
     const interval_id = setInterval(() => {
@@ -268,6 +306,9 @@ const getAnswer = () => {
     return Boolean(callRoomsWebSocket.send(JSON.stringify({ type: "answer.get" /* ActionType.answerGet */ })));
 };
 const getCandidate = () => {
+    if (isClose) {
+        return true;
+    }
     return Boolean(callRoomsWebSocket.send(JSON.stringify({ type: "candidate.get" /* ActionType.candidateGet */ })));
 };
 const addIceCandidate = (iceCandidate) => __awaiter(void 0, void 0, void 0, function* () {
@@ -294,6 +335,9 @@ const init = () => __awaiter(void 0, void 0, void 0, function* () {
         });
     };
     startCommunication();
+    (0,_components_videos__WEBPACK_IMPORTED_MODULE_0__.addCloseCallHandler)();
+    (0,_components_videos__WEBPACK_IMPORTED_MODULE_0__.addMuteCallHandler)(localMediaStream);
+    (0,_components_videos__WEBPACK_IMPORTED_MODULE_0__.addHideCallHandler)(localMediaStream);
 });
 init();
 

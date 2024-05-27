@@ -21,7 +21,7 @@ class OnlineSubscribersStorage(RedisStorage):
             return
 
         subscribers[subscriber_id] = True
-        cache.set(self.key, subscribers)
+        self.cache_set(subscribers)
 
     def remove(self, subscriber_id: str) -> None:
         subscribers = self.get_all()
@@ -30,4 +30,4 @@ class OnlineSubscribersStorage(RedisStorage):
             return
 
         del subscribers[subscriber_id]
-        cache.set(self.key, subscribers)
+        self.cache_set(subscribers)

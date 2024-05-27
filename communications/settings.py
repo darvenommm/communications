@@ -109,6 +109,7 @@ CACHES = {
         "LOCATION": f"redis://127.0.0.1:{REDIS_PORT}/",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "COMPRESSOR": "django_redis.compressors.zlib.ZlibCompressor",
         },
     }
 }
