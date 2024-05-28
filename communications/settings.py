@@ -48,8 +48,8 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     "daphne",
-    "auth_users.apps.AuthUsersConfig",
-    "calls.apps.CallsConfig",
+    "subscribers",
+    "calls",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -183,7 +183,7 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-AUTH_USER_MODEL = "auth_users.User"
+AUTH_USER_MODEL = "subscribers.Subscriber"
 
 
 REST_FRAMEWORK = {

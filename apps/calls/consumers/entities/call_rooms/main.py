@@ -6,7 +6,7 @@ from calls.consumers.storages import CallRoomsStorage
 
 
 class CallRoomsConsumer(AsyncConsumerHelper):
-    user_unique_prefix = "call_rooms"
+    unique_prefix = "call_rooms"
     rooms_storage = CallRoomsStorage()
 
     def get_room_id(self) -> str:
@@ -14,21 +14,21 @@ class CallRoomsConsumer(AsyncConsumerHelper):
 
     async def connect(self) -> None:
         try:
-            user_id = str(self.get_user().id)
+            subscriber_id = str(self.get_subscriber().id)
         except ValueError:
             return
 
         room = self.rooms_storage.get(self.get_room_id())
-        if (not room) or (user_id not in room.get("ids", [])):
+        if (not room) or (subscriber_id not in room.get("ids", [])):
             return
 
         await self.accept()
 
-        from_user_id = cast(list[str], room["ids"])[0]
+        from_subscriber_id = cast(list[str], room["ids"])[0]
         await self.send_json(
             {
                 "type": ActionType.who,
-                "data": WhoAmI.starter if user_id == from_user_id else WhoAmI.answerer,
+                "data": WhoAmI.starter if subscriber_id == from_subscriber_id else WhoAmI.answerer,
             }
         )
 
@@ -85,24 +85,26 @@ class CallRoomsConsumer(AsyncConsumerHelper):
         await self.send_json({"type": ActionType.answer_get, "data": room["answer"]})
 
     async def handle_candidate_send(self, received_content: dict[str, Any]) -> None:
-        user = self.get_user()
+        subscriber = self.get_subscriber()
         room_id = self.get_room_id()
         room = self.rooms_storage.get(room_id)
 
         if not room:
             return
 
-        need_user_id = list(filter(lambda user_id: user_id != str(user.id), room["ids"]))[0]
-        self.rooms_storage.add_candidate(room_id, need_user_id, received_content["data"])
+        need_subscriber_id = list(
+            filter(lambda subscriber_id: subscriber_id != str(subscriber.id), room["ids"])
+        )[0]
+        self.rooms_storage.add_candidate(room_id, need_subscriber_id, received_content["data"])
 
     async def handle_candidate_get(self) -> None:
-        user_id = str(self.get_user().id)
+        subscriber_id = str(self.get_subscriber().id)
         room_id = self.get_room_id()
         room = self.rooms_storage.get(room_id)
 
         if not room:
             return
 
-        candidates = self.rooms_storage.get_candidates(room_id, user_id)
+        candidates = self.rooms_storage.get_candidates(room_id, subscriber_id)
 
         await self.send_json({"type": ActionType.candidate_get, "data": candidates})

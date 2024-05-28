@@ -7,24 +7,24 @@ from calls.consumers.storages import CallOffersStorage, CallRoomsStorage
 
 
 class CallOffersConsumer(AsyncConsumerHelper):
-    user_unique_prefix = "call_offers"
+    unique_prefix = "call_offers"
     offers_storage = CallOffersStorage()
     rooms_storage = CallRoomsStorage()
 
     async def connect(self) -> None:
         try:
-            user = self.get_user()
+            subscriber = self.get_subscriber()
         except ValueError:
             return
 
-        user_group = self.create_unique_group(str(user.id))
-        await self.get_channel_layer().group_add(user_group, self.channel_name)
+        subscriber_group = self.create_unique(str(subscriber.id))
+        await self.get_channel_layer().group_add(subscriber_group, self.channel_name)
         await self.accept()
 
     async def disconnect(self, _: int) -> None:
-        user = self.get_user()
-        user_group = self.create_unique_group(str(user.id))
-        await self.get_channel_layer().group_discard(user_group, self.channel_name)
+        subscriber = self.get_subscriber()
+        subscriber_group = self.create_unique(str(subscriber.id))
+        await self.get_channel_layer().group_discard(subscriber_group, self.channel_name)
 
     async def receive_json(self, received_content: dict[str, Any]) -> None:
         match received_content.get("type", ""):
@@ -36,48 +36,48 @@ class CallOffersConsumer(AsyncConsumerHelper):
                 await self.handle_offer_success(received_content)
 
     async def handle_offer_connection(self, received_content: dict[str, str]) -> None:
-        from_user = self.get_user()
+        from_subscriber = self.get_subscriber()
 
-        from_user_id = str(from_user.id)
-        to_user_id = cast(str, received_content["data"])
+        from_subscriber_id = str(from_subscriber.id)
+        to_subscriber_id = cast(str, received_content["data"])
 
-        self.offers_storage.add(from_user_id, to_user_id)
+        self.offers_storage.add(from_subscriber_id, to_subscriber_id)
 
         await self.get_channel_layer().group_send(
-            self.create_unique_group(to_user_id),
+            self.create_unique(to_subscriber_id),
             {
                 "type": ActionType.offer_connection,
-                "data": {"id": from_user_id, "full_name": from_user.full_name},
+                "data": {"id": from_subscriber_id, "full_name": from_subscriber.full_name},
             },
         )
 
     async def handle_offer_cancel(self, received_content: dict[str, str]) -> None:
-        to_user = self.get_user()
+        to_subscriber = self.get_subscriber()
 
-        from_user_id = cast(str, received_content["data"])
-        to_user_id = str(to_user.id)
+        from_subscriber_id = cast(str, received_content["data"])
+        to_subscriber_id = str(to_subscriber.id)
 
-        if self.offers_storage.get(from_user_id) == to_user_id:
-            self.offers_storage.remove(from_user_id)
+        if self.offers_storage.get(from_subscriber_id) == to_subscriber_id:
+            self.offers_storage.remove(from_subscriber_id)
             await self.get_channel_layer().group_send(
-                self.create_unique_group(from_user_id),
+                self.create_unique(from_subscriber_id),
                 {"type": ActionType.offer_cancel},
             )
 
     async def handle_offer_success(self, received_content: dict[str, Any]) -> None:
-        to_user = self.get_user()
+        to_subscriber = self.get_subscriber()
 
-        from_user_id = cast(str, received_content["data"])
-        to_user_id = str(to_user.id)
+        from_subscriber_id = cast(str, received_content["data"])
+        to_subscriber_id = str(to_subscriber.id)
 
-        if self.offers_storage.get(from_user_id) == to_user_id:
-            self.offers_storage.remove(from_user_id)
+        if self.offers_storage.get(from_subscriber_id) == to_subscriber_id:
+            self.offers_storage.remove(from_subscriber_id)
 
             call_room_id = str(uuid4())
-            self.rooms_storage.add(call_room_id, from_user_id, to_user_id)
-            for user_id in (from_user_id, to_user_id):
+            self.rooms_storage.add(call_room_id, from_subscriber_id, to_subscriber_id)
+            for subscriber_id in (from_subscriber_id, to_subscriber_id):
                 await self.get_channel_layer().group_send(
-                    self.create_unique_group(user_id),
+                    self.create_unique(subscriber_id),
                     {"type": ActionType.offer_success, "data": call_room_id},
                 )
 

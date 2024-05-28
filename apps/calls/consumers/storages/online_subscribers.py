@@ -1,8 +1,6 @@
 from typing import Literal
 
-from django.core.cache import cache
-
-from library.RedisStorage import RedisStorage
+from library.storages.redis_storage import RedisStorage
 
 
 class OnlineSubscribersStorage(RedisStorage):
@@ -15,19 +13,19 @@ class OnlineSubscribersStorage(RedisStorage):
         return super().get_all()
 
     def add(self, subscriber_id: str) -> None:
-        subscribers = self.get_all()
+        online_subscribers = self.get_all()
 
-        if subscribers.get(subscriber_id):
+        if online_subscribers.get(subscriber_id):
             return
 
-        subscribers[subscriber_id] = True
-        self.cache_set(subscribers)
+        online_subscribers[subscriber_id] = True
+        self.cache_set(online_subscribers)
 
     def remove(self, subscriber_id: str) -> None:
-        subscribers = self.get_all()
+        online_subscribers = self.get_all()
 
-        if not subscribers.get(subscriber_id):
+        if not online_subscribers.get(subscriber_id):
             return
 
-        del subscribers[subscriber_id]
-        self.cache_set(subscribers)
+        del online_subscribers[subscriber_id]
+        self.cache_set(online_subscribers)

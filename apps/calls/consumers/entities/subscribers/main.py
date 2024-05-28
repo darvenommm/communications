@@ -11,24 +11,24 @@ class SubscriberConsumer(AsyncConsumerHelper):
 
     async def connect(self) -> None:
         try:
-            user = self.get_user()
+            subscriber = self.get_subscriber()
         except ValueError:
             return
 
-        user_id = str(user.id)
-        self.online_subscribers_storage.add(user_id)
+        subscriber_id = str(subscriber.id)
+        self.online_subscribers_storage.add(subscriber_id)
 
         await self.get_channel_layer().group_add(self.online_subscribers_group, self.channel_name)
         await self.get_channel_layer().group_send(
             self.online_subscribers_group,
-            {"type": ActionType.subscriber_invite, "data": user_id},
+            {"type": ActionType.subscriber_invite, "data": subscriber_id},
         )
 
         await self.accept()
 
     async def disconnect(self, _: int) -> None:
-        user_id = str(self.get_user().id)
-        self.online_subscribers_storage.remove(user_id)
+        subscriber_id = str(self.get_subscriber().id)
+        self.online_subscribers_storage.remove(subscriber_id)
 
         await self.get_channel_layer().group_discard(
             self.online_subscribers_group,
@@ -36,7 +36,7 @@ class SubscriberConsumer(AsyncConsumerHelper):
         )
         await self.get_channel_layer().group_send(
             self.online_subscribers_group,
-            {"type": ActionType.subscriber_discard, "data": user_id},
+            {"type": ActionType.subscriber_discard, "data": subscriber_id},
         )
 
     async def receive_json(self, received_data: dict[str, Any]) -> None:

@@ -1,10 +1,10 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from .mixins import UuidMixin
+from library.models.mixins.uuid_mixin import UuidMixin
 
 from .operator import Operator
-from .subscriber import Subscriber
+from subscribers.models import Subscriber
 
 
 class OperatorSubscriber(UuidMixin, models.Model):
@@ -12,7 +12,7 @@ class OperatorSubscriber(UuidMixin, models.Model):
     subscriber = models.ForeignKey(Subscriber, models.CASCADE, verbose_name=_("subscriber"))
 
     def __str__(self) -> str:
-        return f"{self.operator.title} - {self.subscriber.user.full_name}"
+        return f"{self.operator.title} - {self.subscriber.full_name}"
 
     class Meta:
         verbose_name = _("relation of operator and subscriber")

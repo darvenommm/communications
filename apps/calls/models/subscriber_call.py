@@ -1,9 +1,13 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from .mixins import UuidMixin, CreatedMixin, UpdatedMixin
-from .validators import duration_positivity_validator, TimeRangeValidator
-from .subscriber import Subscriber
+from library.models.mixins.uuid_mixin import UuidMixin
+from library.models.mixins.created_mixin import CreatedMixin
+from library.models.mixins.updated_mixin import UpdatedMixin
+from library.models.validators.duration_positivity_validator import duration_positivity_validator
+from library.models.validators.time_range_validator import TimeRangeValidator
+
+from subscribers.models import Subscriber
 
 
 class SubscriberCall(UuidMixin, CreatedMixin, UpdatedMixin, models.Model):
@@ -24,8 +28,8 @@ class SubscriberCall(UuidMixin, CreatedMixin, UpdatedMixin, models.Model):
 
     def __str__(self) -> str:
         return _("call from %(caller_full_name)s to %(receiver_full_name)s") % {
-            "caller_full_name": self.caller.user.full_name,
-            "receiver_full_name": self.receiver.user.full_name,
+            "caller_full_name": self.caller.full_name,
+            "receiver_full_name": self.receiver.full_name,
         }
 
     class Meta:
@@ -33,10 +37,10 @@ class SubscriberCall(UuidMixin, CreatedMixin, UpdatedMixin, models.Model):
         verbose_name_plural = _("subscribers calls")
         db_table = '"communications"."subscriber_call"'
         ordering = (
-            "caller__user__first_name",
-            "caller__user__last_name",
-            "receiver__user__first_name",
-            "receiver__user__last_name",
+            "caller__first_name",
+            "caller__last_name",
+            "receiver__first_name",
+            "receiver__last_name",
         )
         constraints = (
             models.CheckConstraint(

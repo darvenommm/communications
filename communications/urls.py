@@ -23,7 +23,7 @@ from django.conf.urls.i18n import i18n_patterns
 from rest_framework.routers import DefaultRouter
 from rest_framework.authtoken import views
 
-from auth_users.rest import register_rest_routes as auth_user_register
+from subscribers.rest import register_rest_routes as auth_user_register
 from calls.rest import register_rest_routes as calls_register
 
 
@@ -41,7 +41,7 @@ urlpatterns = [
     *i18n_patterns(
         path("admin/", admin.site.urls),
         path("", include("calls.urls", namespace="calls")),
-        path("auth/", include("auth_users.urls", namespace="auth_users")),
+        # path("auth/", include("subscribers.urls", namespace="subscribers")),
         prefix_default_language=False,
     ),
 ]

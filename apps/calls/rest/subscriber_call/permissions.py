@@ -1,6 +1,6 @@
 from rest_framework import permissions, request, viewsets
 
-from library.PermissionHelperMixin import PermissionHelperMixin
+from library.rest.permission_helper_mixin import PermissionHelperMixin
 from calls.models import SubscriberCall
 
 
@@ -20,4 +20,4 @@ class SubscriberCallPermission(PermissionHelperMixin, permissions.BasePermission
         if not self.is_safe_method(request):
             return False
 
-        return request.user.pk in (call.caller.user.pk, call.receiver.user.pk)
+        return request.user.pk in (call.caller.id, call.receiver.id)

@@ -1,8 +1,16 @@
-from typing import Any, cast
+from typing import Any, cast, TypedDict, Required, NotRequired, Optional
 import datetime
 
 from django.core.cache import cache
-from library.RedisStorage import RedisStorage
+from library.storages.redis_storage import RedisStorage
+
+
+class CallRoomType(TypedDict):
+    ids: Required[tuple[str, str]]
+    candidates: Required[dict[str, list[str]]]
+    start_time: Required[Optional[datetime.datetime]]
+    offer: Required[Optional[dict[str, Any]]]
+    answer: Required[Optional[dict[str, Any]]]
 
 
 class CallRoomsStorage(RedisStorage):
@@ -11,10 +19,10 @@ class CallRoomsStorage(RedisStorage):
     def __init__(self) -> None:
         super().__init__()
 
-    def get_all(self) -> dict[str, Any]:
+    def get_all(self) -> dict[str, CallRoomType]:
         return super().get_all()
 
-    def get(self, room_id: str) -> dict | None:
+    def get(self, room_id: str) -> Optional[CallRoomType]:
         return self.get_all().get(room_id)
 
     def add(self, room_id: str, from_subscriber_id: str, to_subscriber_id: str) -> None:
@@ -24,7 +32,7 @@ class CallRoomsStorage(RedisStorage):
             return
 
         rooms[room_id] = {
-            "ids": [from_subscriber_id, to_subscriber_id],
+            "ids": (from_subscriber_id, to_subscriber_id),
             "start_time": None,
             "offer": None,
             "answer": None,
@@ -51,7 +59,7 @@ class CallRoomsStorage(RedisStorage):
         if not rooms.get(room_id):
             return
 
-        rooms[room_id]["start_time"] = str(datetime.datetime.now())
+        rooms[room_id]["start_time"] = datetime.datetime.now()
         self.cache_set(rooms)
 
     def set_offer(self, room_id: str, offer: dict) -> None:

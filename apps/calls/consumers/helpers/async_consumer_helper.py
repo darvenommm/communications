@@ -4,23 +4,22 @@ from django.contrib.auth.models import AnonymousUser
 from channels.layers import InMemoryChannelLayer
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 
-from auth_users.models import User
+from subscribers.models import Subscriber
 
 
 class AsyncConsumerHelper(AsyncJsonWebsocketConsumer):
-    user_unique_prefix: str
+    unique_prefix: str
 
     def get_channel_layer(self) -> InMemoryChannelLayer:
         return cast(InMemoryChannelLayer, self.channel_layer)
 
-    def get_user(self) -> User:
-        user = cast(User | AnonymousUser, self.scope["user"])
-        is_authorized_user = hasattr(user, "id")
+    def get_subscriber(self) -> Subscriber:
+        subscriber = cast(Subscriber | AnonymousUser, self.scope["user"])
 
-        if not is_authorized_user:
-            raise ValueError("Isn't user authorized!")
+        if isinstance(subscriber, AnonymousUser):
+            raise ValueError("Current subscriber doesn't authorized!")
 
-        return cast(User, user)
+        return subscriber
 
-    def create_unique_group(self, user_id: str) -> str:
-        return f"{self.user_unique_prefix}_{user_id}"
+    def create_unique(self, subscriber_id: str) -> str:
+        return f"{self.unique_prefix}_{subscriber_id}"

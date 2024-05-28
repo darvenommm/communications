@@ -1,9 +1,11 @@
 from rest_framework import status
 
-from library.ApiStatusTestCase import ApiStatusTestCaseWrapper
+from calls.models import Operator
+from library.rest.api_status_test_case import ApiStatusTestCaseWrapper
 
 
 class OperatorTestCase(ApiStatusTestCaseWrapper.ApiStatusTestCase):
+    queryset = Operator.objects.all()
     entity_name = "operators"
     entity_data = {
         "title": "test_title",

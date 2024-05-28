@@ -1,7 +1,7 @@
 from rest_framework import permissions, request, viewsets
 
 from calls.models import Operator
-from library.PermissionHelperMixin import PermissionHelperMixin
+from library.rest.permission_helper_mixin import PermissionHelperMixin
 
 
 class OperatorPermission(PermissionHelperMixin, permissions.BasePermission):

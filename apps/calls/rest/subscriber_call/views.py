@@ -7,7 +7,7 @@ from .serializers import SubscriberCallDefaultSerializer, SubscriberCallCreateAn
 
 
 class SubscriberCallViewSet(viewsets.ModelViewSet):
-    queryset = SubscriberCall.objects.select_related("caller__user", "receiver__user").all()
+    queryset = SubscriberCall.objects.select_related("caller", "receiver").all()
     permission_classes = (permissions.IsAuthenticated, SubscriberCallPermission)
 
     def filter_queryset(self, queryset: models.QuerySet):

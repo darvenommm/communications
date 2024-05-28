@@ -1,6 +1,6 @@
 from django.core.cache import cache
 
-from library.RedisStorage import RedisStorage
+from library.storages.redis_storage import RedisStorage
 
 
 class CallOffersStorage(RedisStorage):

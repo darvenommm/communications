@@ -4,8 +4,9 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
-from calls.models import SubscriberCall, Subscriber
-from calls.rest.subscriber import SubscriberDefaultSerializer
+from subscribers.models import Subscriber
+from subscribers.rest.subscriber import SubscriberDefaultSerializer
+from calls.models import SubscriberCall
 
 
 class SubscriberCallDefaultSerializer(serializers.ModelSerializer):
