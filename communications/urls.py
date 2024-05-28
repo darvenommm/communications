@@ -41,6 +41,7 @@ urlpatterns = [
     *i18n_patterns(
         path("admin/", admin.site.urls),
         path("", include("calls.urls", namespace="calls")),
+        path("auth/", include("auth_users.urls", namespace="auth_users")),
         prefix_default_language=False,
     ),
 ]

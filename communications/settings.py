@@ -76,7 +76,7 @@ ROOT_URLCONF = "communications.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "communications" / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
