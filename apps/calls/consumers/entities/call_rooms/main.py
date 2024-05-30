@@ -20,6 +20,17 @@ class CallRoomsConsumer(AsyncConsumerHelper):
 
             await asyncio.sleep(0.1)
 
+    async def __watch_limit_time(self, limit_time: int) -> None:
+        start = datetime.datetime.now()
+
+        while True:
+            minutes = (datetime.datetime.now() - start).seconds // 60
+
+            if minutes >= limit_time:
+                return await self.handle_close()
+
+            await asyncio.sleep(60)
+
     def get_room_id(self) -> str:
         return str(self.scope["url_route"]["kwargs"]["room_id"])
 
@@ -58,6 +69,9 @@ class CallRoomsConsumer(AsyncConsumerHelper):
             case id if id == to_subscriber_id:
                 self.rooms_storage.set_answerer_is_connected(room_id)
 
+        for subscriber_id in room["ids"]:
+            await self.send_json({"type": ActionType.time_limit, "data": room["time_limit"]})
+
     async def disconnect(self, _: int) -> None:
         await self.handle_close()
 
@@ -74,7 +88,7 @@ class CallRoomsConsumer(AsyncConsumerHelper):
             case ActionType.candidate:
                 await self.handle_candidate(received_content)
             case ActionType.connected:
-                self.handle_connected()
+                await self.handle_connected()
             case ActionType.close:
                 await self.handle_close()
 
@@ -116,26 +130,27 @@ class CallRoomsConsumer(AsyncConsumerHelper):
             {"type": ActionType.candidate, "data": received_content["data"]},
         )
 
-    def handle_connected(self) -> None:
+    async def handle_connected(self) -> None:
         room_id = self.get_room_id()
         room = self.rooms_storage.get(room_id)
-        if not room:
+        if (not room) or (str(self.subscriber.id) == room["ids"][1]):
             return
 
         self.rooms_storage.set_start(room_id)
+        asyncio.create_task(self.__watch_limit_time(room["time_limit"]))
 
     async def handle_close(self) -> None:
         room_id = self.get_room_id()
         room = self.rooms_storage.get(room_id)
         if not room:
             return
+        self.rooms_storage.remove(room_id)
 
         for id in room["ids"]:
             unique_group_name = self.create_unique(id)
             await self.get_channel_layer().group_send(unique_group_name, {"type": ActionType.close})
 
         await self.rooms_storage.add_room_to_db(room)
-        self.rooms_storage.remove(room_id)
 
     async def answer(self, received_content: dict[str, Any]) -> None:
         await self.send_json(received_content)

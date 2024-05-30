@@ -2,6 +2,42 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "./apps/calls/ts/components/notify/index.ts":
+/*!**************************************************!*\
+  !*** ./apps/calls/ts/components/notify/index.ts ***!
+  \**************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   closeNotify: () => (/* binding */ closeNotify),
+/* harmony export */   showNotify: () => (/* binding */ showNotify)
+/* harmony export */ });
+const NOTIFY_CLASS = 'notify';
+const NOTIFY_ACTIVE_CLASS = `${NOTIFY_CLASS}--active`;
+const NOTIFY_TEXT_CLASS = 'notify__text';
+const notify = document.querySelector(`.${NOTIFY_CLASS}`);
+if (!notify) {
+    throw Error('Not found notify container!');
+}
+const notifyText = notify.querySelector(`.${NOTIFY_TEXT_CLASS}`);
+if (!notifyText) {
+    throw Error('Not found notify text container!');
+}
+const closeNotify = () => notify.classList.remove(NOTIFY_ACTIVE_CLASS);
+let notifyTimeoutId;
+const showNotify = (message, timeout = Infinity) => {
+    clearTimeout(notifyTimeoutId);
+    notifyText.textContent = message;
+    notify.classList.add(NOTIFY_ACTIVE_CLASS);
+    if (timeout !== Infinity) {
+        notifyTimeoutId = setTimeout(closeNotify, timeout);
+    }
+};
+
+
+/***/ }),
+
 /***/ "./apps/calls/ts/components/videos/index.ts":
 /*!**************************************************!*\
   !*** ./apps/calls/ts/components/videos/index.ts ***!
@@ -157,6 +193,7 @@ var __webpack_exports__ = {};
   \***********************************************/
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_videos__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../components/videos */ "./apps/calls/ts/components/videos/index.ts");
+/* harmony import */ var _components_notify__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../components/notify */ "./apps/calls/ts/components/notify/index.ts");
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -166,6 +203,7 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+
 
 const RTC_CONFIGURATION = {
     iceServers: [{ urls: ['stun:stun2.1.google.com:19302'] }],
@@ -180,13 +218,13 @@ peerConnection.addEventListener('icecandidate', ({ candidate }) => {
 });
 peerConnection.addEventListener('connectionstatechange', () => {
     if (peerConnection.connectionState === 'connected') {
+        console.log('connected');
         callRoomsWebSocket.send(JSON.stringify({ type: "connected" /* ActionType.connected */ }));
     }
 });
 const startCommunication = () => {
     console.log('Start communication');
     const roomId = location.pathname.split('/').filter(Boolean).at(-1);
-    console.log(roomId);
     callRoomsWebSocket = new WebSocket(`ws://${location.host}/call-rooms/${roomId}/`);
     callRoomsWebSocket.onmessage = (_a) => __awaiter(void 0, [_a], void 0, function* ({ data }) {
         const parsedData = JSON.parse(data);
@@ -209,6 +247,9 @@ const startCommunication = () => {
             }
             case "close" /* ActionType.close */: {
                 return void (location.href = window.homePath);
+            }
+            case "time.limit" /* ActionType.timeLimit */: {
+                return showTimeLimit(parsedData.data);
             }
             default: {
                 return console.error('Unknown Action type in the call room script!');
@@ -257,6 +298,9 @@ const setCandidate = (iceCandidate) => __awaiter(void 0, void 0, void 0, functio
         console.error('Error adding ICE candidate', error);
     }
 });
+const showTimeLimit = (timeLimit) => {
+    (0,_components_notify__WEBPACK_IMPORTED_MODULE_1__.showNotify)(`You will talk for ${timeLimit} minutes!`);
+};
 const init = () => __awaiter(void 0, void 0, void 0, function* () {
     console.log('Initializing media streams');
     const localMediaStream = yield (0,_components_videos__WEBPACK_IMPORTED_MODULE_0__.createAndSetLocalMediaStream)();

@@ -2,8 +2,10 @@ import asyncio
 from typing import cast, TypedDict, Required, Optional
 import datetime
 
+from django.db import models
+
 from subscribers.models import Subscriber
-from calls.models import SubscriberCall
+from calls.models import Operator, SubscriberCall
 from library.storages.redis_storage import RedisStorage
 
 
@@ -11,6 +13,7 @@ class CallRoomType(TypedDict):
     ids: Required[tuple[str, str]]
     start_time: Required[Optional[datetime.datetime]]
     is_answerer_connected: Required[bool]
+    time_limit: Required[int]  # in minutes
 
 
 class CallRoomsStorage(RedisStorage):
@@ -25,16 +28,37 @@ class CallRoomsStorage(RedisStorage):
     def get(self, room_id: str) -> Optional[CallRoomType]:
         return self.get_all().get(room_id)
 
-    def add(self, room_id: str, from_subscriber_id: str, to_subscriber_id: str) -> None:
+    async def add(self, room_id: str, from_subscriber_id: str, to_subscriber_id: str) -> None:
         rooms = self.get_all()
 
         if rooms.get(room_id):
             return
 
+        async with asyncio.TaskGroup() as tg:
+            from_subscriber_task = tg.create_task(Subscriber.objects.aget(id=from_subscriber_id))
+            to_subscriber_task = tg.create_task(Subscriber.objects.aget(id=to_subscriber_id))
+
+        from_subscriber = await from_subscriber_task
+        to_subscriber = await to_subscriber_task
+
+        from_subscriber_operators = cast(
+            models.QuerySet[Operator], getattr(from_subscriber, "operators")
+        ).all()
+        to_subscriber_operators = cast(
+            models.QuerySet[Operator], getattr(to_subscriber, "operators")
+        ).all()
+
+        time_limit = 10
+        async for from_operator in from_subscriber_operators:
+            async for to_operator in to_subscriber_operators:
+                if from_operator.id == to_operator.id:
+                    time_limit = 15
+
         rooms[room_id] = {
             "ids": (from_subscriber_id, to_subscriber_id),
             "start_time": None,
             "is_answerer_connected": False,
+            "time_limit": time_limit,
         }
 
         self.cache_set(rooms)

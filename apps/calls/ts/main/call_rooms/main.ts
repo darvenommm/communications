@@ -8,6 +8,7 @@ import {
 
 import { ActionType } from './types';
 import type { WebSocketEventData } from '../../types/websocket';
+import { showNotify } from '../../components/notify';
 
 const RTC_CONFIGURATION: RTCConfiguration = {
   iceServers: [{ urls: ['stun:stun2.1.google.com:19302'] }],
@@ -24,6 +25,7 @@ peerConnection.addEventListener('icecandidate', ({ candidate }) => {
 });
 peerConnection.addEventListener('connectionstatechange', () => {
   if (peerConnection.connectionState === 'connected') {
+    console.log('connected');
     callRoomsWebSocket.send(JSON.stringify({ type: ActionType.connected }));
   }
 });
@@ -31,7 +33,6 @@ peerConnection.addEventListener('connectionstatechange', () => {
 const startCommunication = (): void => {
   console.log('Start communication');
   const roomId = location.pathname.split('/').filter(Boolean).at(-1);
-  console.log(roomId);
   callRoomsWebSocket = new WebSocket(`ws://${location.host}/call-rooms/${roomId}/`);
 
   callRoomsWebSocket.onmessage = async ({ data }): Promise<void> => {
@@ -60,6 +61,10 @@ const startCommunication = (): void => {
 
       case ActionType.close: {
         return void (location.href = window.homePath);
+      }
+
+      case ActionType.timeLimit: {
+        return showTimeLimit(parsedData.data as number);
       }
 
       default: {
@@ -116,6 +121,10 @@ const setCandidate = async (iceCandidate: RTCIceCandidate): Promise<void> => {
   } catch (error) {
     console.error('Error adding ICE candidate', error);
   }
+};
+
+const showTimeLimit = (timeLimit: number): void => {
+  showNotify(`You will talk for ${timeLimit} minutes!`);
 };
 
 const init = async (): Promise<void> => {

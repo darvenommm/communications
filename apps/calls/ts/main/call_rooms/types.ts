@@ -5,4 +5,5 @@ export const enum ActionType {
   candidate = 'candidate',
   connected = 'connected',
   close = 'close',
+  timeLimit = 'time.limit',
 }

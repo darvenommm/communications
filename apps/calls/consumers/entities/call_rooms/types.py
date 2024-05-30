@@ -8,3 +8,4 @@ class ActionType(StrEnum):
     candidate = "candidate"
     connected = "connected"
     close = "close"
+    time_limit = "time.limit"
