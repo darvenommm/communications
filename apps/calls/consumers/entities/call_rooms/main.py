@@ -59,7 +59,8 @@ class CallRoomsConsumer(AsyncConsumerHelper):
                 self.rooms_storage.set_answerer_is_connected(room_id)
 
     async def disconnect(self, _: int) -> None:
-        self.rooms_storage.remove(self.get_room_id())
+        await self.handle_close()
+
         await self.get_channel_layer().group_discard(
             self.create_unique(str(self.subscriber.id)), self.channel_name
         )
@@ -122,10 +123,10 @@ class CallRoomsConsumer(AsyncConsumerHelper):
             return
 
         self.rooms_storage.set_start(room_id)
-        print("start", flush=True)
 
     async def handle_close(self) -> None:
-        room = self.rooms_storage.get(self.get_room_id())
+        room_id = self.get_room_id()
+        room = self.rooms_storage.get(room_id)
         if not room:
             return
 
@@ -134,6 +135,7 @@ class CallRoomsConsumer(AsyncConsumerHelper):
             await self.get_channel_layer().group_send(unique_group_name, {"type": ActionType.close})
 
         await self.rooms_storage.add_room_to_db(room)
+        self.rooms_storage.remove(room_id)
 
     async def answer(self, received_content: dict[str, Any]) -> None:
         await self.send_json(received_content)
