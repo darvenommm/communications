@@ -1,16 +1,16 @@
-from typing import Any, cast, TypedDict, Required, NotRequired, Optional
+import asyncio
+from typing import cast, TypedDict, Required, Optional
 import datetime
 
-from django.core.cache import cache
+from subscribers.models import Subscriber
+from calls.models import SubscriberCall
 from library.storages.redis_storage import RedisStorage
 
 
 class CallRoomType(TypedDict):
     ids: Required[tuple[str, str]]
-    candidates: Required[dict[str, list[str]]]
     start_time: Required[Optional[datetime.datetime]]
-    offer: Required[Optional[dict[str, Any]]]
-    answer: Required[Optional[dict[str, Any]]]
+    is_answerer_connected: Required[bool]
 
 
 class CallRoomsStorage(RedisStorage):
@@ -34,12 +34,7 @@ class CallRoomsStorage(RedisStorage):
         rooms[room_id] = {
             "ids": (from_subscriber_id, to_subscriber_id),
             "start_time": None,
-            "offer": None,
-            "answer": None,
-            "candidates": {
-                from_subscriber_id: [],
-                to_subscriber_id: [],
-            },
+            "is_answerer_connected": False,
         }
 
         self.cache_set(rooms)
@@ -53,6 +48,15 @@ class CallRoomsStorage(RedisStorage):
         del rooms[room_id]
         self.cache_set(rooms)
 
+    def set_answerer_is_connected(self, room_id: str) -> None:
+        rooms = self.get_all()
+
+        if not rooms.get(room_id):
+            return
+
+        rooms[room_id]["is_answerer_connected"] = True
+        self.cache_set(rooms)
+
     def set_start(self, room_id: str) -> None:
         rooms = self.get_all()
 
@@ -62,44 +66,20 @@ class CallRoomsStorage(RedisStorage):
         rooms[room_id]["start_time"] = datetime.datetime.now()
         self.cache_set(rooms)
 
-    def set_offer(self, room_id: str, offer: dict) -> None:
-        rooms = self.get_all()
+    async def add_room_to_db(self, room: CallRoomType) -> None:
+        (from_subscriber_id, to_subscriber_id) = room["ids"]
 
-        if not rooms.get(room_id):
-            return
+        async with asyncio.TaskGroup() as tg:
+            from_subscriber_task = tg.create_task(Subscriber.objects.aget(id=from_subscriber_id))
+            to_subscriber_task = tg.create_task(Subscriber.objects.aget(id=to_subscriber_id))
 
-        rooms[room_id]["offer"] = offer
-        self.cache_set(rooms)
+            from_subscriber = await from_subscriber_task
+            to_subscriber = await to_subscriber_task
 
-    def set_answer(self, room_id: str, answer: dict) -> None:
-        rooms = self.get_all()
-
-        if not rooms.get(room_id):
-            return
-
-        rooms[room_id]["answer"] = answer
-        cache.set(self.key, rooms)
-
-    def add_candidate(self, room_id: str, to: str, candidate: dict) -> None:
-        rooms = self.get_all()
-        room = rooms.get(room_id)
-
-        if not room or (to not in room["ids"]):
-            return
-
-        cast(list, rooms[room_id]["candidates"][to]).append(candidate)
-        self.cache_set(rooms)
-
-    def get_candidates(self, room_id: str, to: str) -> list[dict]:
-        rooms = self.get_all()
-        room = rooms.get(room_id)
-
-        if not room or (to not in room["ids"]):
-            return []
-
-        candidates = cast(list, rooms[room_id]["candidates"][to]).copy()
-        rooms[room_id]["candidates"][to] = []
-
-        self.cache_set(rooms)
-
-        return candidates
+        duration = datetime.datetime.now() - cast(datetime.datetime, room["start_time"])
+        await SubscriberCall.objects.acreate(
+            caller=from_subscriber,
+            receiver=to_subscriber,
+            start=room["start_time"],
+            duration=duration,
+        )

@@ -76,7 +76,7 @@ ROOT_URLCONF = "communications.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "communications" / "templates"],
+        "DIRS": [],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -202,3 +202,7 @@ if IS_DEVELOPMENT:
     REST_FRAMEWORK.get("DEFAULT_RENDERER_CLASSES", []).append(
         "rest_framework.renderers.BrowsableAPIRenderer",
     )
+
+LOGIN_REDIRECT_URL = "home"
+LOGOUT_REDIRECT_URL = "home"
+LOGIN_URL = "auth:log_in"

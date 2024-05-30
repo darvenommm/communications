@@ -1,6 +1,8 @@
 from typing import Any, cast
 from uuid import uuid4
 
+from subscribers.models import Subscriber
+
 from .types import ActionType
 from calls.consumers.helpers import AsyncConsumerHelper
 from calls.consumers.storages import CallOffersStorage, CallRoomsStorage
@@ -12,10 +14,12 @@ class CallOffersConsumer(AsyncConsumerHelper):
     rooms_storage = CallRoomsStorage()
 
     async def connect(self) -> None:
-        try:
-            subscriber = self.get_subscriber()
-        except ValueError:
+        subscriber = self.get_subscriber()
+
+        if not subscriber:
             return
+
+        self.set_subscriber(subscriber)
 
         subscriber_group = self.create_unique(str(subscriber.id))
         await self.get_channel_layer().group_add(subscriber_group, self.channel_name)
@@ -23,6 +27,10 @@ class CallOffersConsumer(AsyncConsumerHelper):
 
     async def disconnect(self, _: int) -> None:
         subscriber = self.get_subscriber()
+
+        if not subscriber:
+            return
+
         subscriber_group = self.create_unique(str(subscriber.id))
         await self.get_channel_layer().group_discard(subscriber_group, self.channel_name)
 
@@ -36,7 +44,7 @@ class CallOffersConsumer(AsyncConsumerHelper):
                 await self.handle_offer_success(received_content)
 
     async def handle_offer_connection(self, received_content: dict[str, str]) -> None:
-        from_subscriber = self.get_subscriber()
+        from_subscriber = self.subscriber
 
         from_subscriber_id = str(from_subscriber.id)
         to_subscriber_id = cast(str, received_content["data"])
@@ -52,7 +60,7 @@ class CallOffersConsumer(AsyncConsumerHelper):
         )
 
     async def handle_offer_cancel(self, received_content: dict[str, str]) -> None:
-        to_subscriber = self.get_subscriber()
+        to_subscriber = self.subscriber
 
         from_subscriber_id = cast(str, received_content["data"])
         to_subscriber_id = str(to_subscriber.id)
@@ -65,7 +73,7 @@ class CallOffersConsumer(AsyncConsumerHelper):
             )
 
     async def handle_offer_success(self, received_content: dict[str, Any]) -> None:
-        to_subscriber = self.get_subscriber()
+        to_subscriber = self.subscriber
 
         from_subscriber_id = cast(str, received_content["data"])
         to_subscriber_id = str(to_subscriber.id)

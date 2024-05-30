@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "calls/base.html" %}
 {% load static %}
 
 {% block head %}
@@ -12,7 +12,7 @@
   {% if subscribers %}
   <ul class="subscribers__list">
   {% for subscriber in subscribers %}
-  {% with current_user=subscriber.user operators=subscriber.operators.all %}
+  {% with current_user=subscriber operators=subscriber.operators.all %}
   {% if user.id != current_user.id %}
     <li
       class="subscribers__item"

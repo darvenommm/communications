@@ -151,9 +151,9 @@ const showNotify = (message, timeout = Infinity) => {
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
-/*!***************************************************!*\
-  !*** ./apps/calls/ts/scripts/call_offers/main.ts ***!
-  \***************************************************/
+/*!************************************************!*\
+  !*** ./apps/calls/ts/main/call_offers/main.ts ***!
+  \************************************************/
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_notify__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../components/notify */ "./apps/calls/ts/components/notify/index.ts");
 /* harmony import */ var _components_dialog__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../components/dialog */ "./apps/calls/ts/components/dialog/index.ts");

@@ -1,11 +1,16 @@
-from django.urls import path
+from django.urls import path, reverse_lazy
+from django.views.generic import RedirectView, TemplateView
 
-from .views import SubscribersView, CallRoomView
+from .views import SubscribersView, CallsHistoryView
 
-
-app_name = "calls"
 
 urlpatterns = [
+    path("", RedirectView.as_view(url=reverse_lazy("home"), permanent=True)),
     path("subscribers/", SubscribersView.as_view(), name="home"),
-    path("call-room/<uuid:call_room_id>", CallRoomView.as_view(), name="call_room"),
+    path("calls-history/", CallsHistoryView.as_view(), name="calls_history"),
+    path(
+        "call-room/<uuid:call_room_id>/",
+        TemplateView.as_view(template_name="calls/pages/call_room.html"),
+        name="call_room",
+    ),
 ]

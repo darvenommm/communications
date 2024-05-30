@@ -192,9 +192,9 @@ const setCallButtonClickHandler = (callback) => {
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
-/*!***************************************************!*\
-  !*** ./apps/calls/ts/scripts/subscribers/main.ts ***!
-  \***************************************************/
+/*!************************************************!*\
+  !*** ./apps/calls/ts/main/subscribers/main.ts ***!
+  \************************************************/
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_subscribers__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../components/subscribers */ "./apps/calls/ts/components/subscribers/index.ts");
 /* harmony import */ var _components_notify__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../components/notify */ "./apps/calls/ts/components/notify/index.ts");
@@ -202,7 +202,6 @@ __webpack_require__.r(__webpack_exports__);
 
 const subscribersWebSocket = new WebSocket(`ws://${location.host}/subscribers/`);
 subscribersWebSocket.addEventListener('open', () => {
-    subscribersWebSocket.send(JSON.stringify({ type: "subscribers.online" /* ActionType.subscribersOnline */ }));
     window.addEventListener('focus', () => {
         subscribersWebSocket.send(JSON.stringify({ type: "subscribers.online" /* ActionType.subscribersOnline */ }));
     });

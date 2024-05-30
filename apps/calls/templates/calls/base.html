@@ -11,7 +11,26 @@
     {% block head %}{% endblock head %}
   </head>
   <body>
-    <header class="header"></header>
+    <header class="header">
+      <div>
+      {% if user.is_authenticated %}
+        <form action="{% url 'auth:log_out' %}" method="post">
+          {% csrf_token %}
+          <button type="submit">log out</button>
+        </form>
+        <p>
+          <a href="{% url 'calls_history' %}">calls history</a>
+        </p>
+      {% else %}
+        <p>
+          <a href="{% url 'auth:log_in' %}">log in</a>
+        </p>
+        <p>
+          <a href="{% url 'auth:registration' %}">registration</a>
+        </p>
+      {% endif %}
+      </div>
+    </header>
     <main>
     {% block content %}{% endblock content %}
     </main>
@@ -28,7 +47,7 @@
       </div>
     </div>
     <script>
-      window.homePath = "{% url 'calls:home' %}";
+      window.homePath = "{% url 'home' %}";
       window.callOffersWebSocket = new WebSocket(`ws://${location.host}/call-offers/`);
     </script>
   </body>

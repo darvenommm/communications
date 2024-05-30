@@ -7,7 +7,16 @@ from subscribers.models import Subscriber
 
 
 class RegistrationForm(forms.ModelForm):
-    repeated_password = forms.CharField(max_length=Subscriber.password_max_length, required=True)
+    password = forms.CharField(
+        label=_("Password"),
+        strip=False,
+        widget=forms.PasswordInput,
+    )
+    repeated_password = forms.CharField(
+        widget=forms.PasswordInput,
+        max_length=Subscriber.password_max_length,
+        strip=False,
+    )
 
     def clean(self) -> dict[str, Any]:
         cleaned_data = super().clean()
@@ -24,4 +33,12 @@ class RegistrationForm(forms.ModelForm):
 
     class Meta:
         model = Subscriber
-        fields = ("first_name", "last_name", "username", "password", "repeated_password")
+        fields = (
+            "first_name",
+            "last_name",
+            "username",
+            "password",
+            "repeated_password",
+            "passport",
+            "birth_date",
+        )

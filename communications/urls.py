@@ -40,8 +40,8 @@ urlpatterns = [
     path("api-token-auth/", views.obtain_auth_token),
     *i18n_patterns(
         path("admin/", admin.site.urls),
-        path("", include("calls.urls", namespace="calls")),
-        # path("auth/", include("subscribers.urls", namespace="subscribers")),
+        path("auth/", include("subscribers.urls", namespace="auth")),
+        path("", include("calls.urls")),
         prefix_default_language=False,
     ),
 ]

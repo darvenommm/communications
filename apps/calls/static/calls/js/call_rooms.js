@@ -69,10 +69,7 @@ const createAndSetRemoteMediaStream = () => {
     return (remoteVideo.srcObject = new MediaStream());
 };
 const addCloseCallHandler = (callback) => {
-    closeButton.onclick = () => {
-        callback ? callback() : null;
-        location.href = window.homePath;
-    };
+    closeButton.onclick = callback;
 };
 const addMuteCallHandler = (localMediaStream) => {
     muteButton.onclick = () => {
@@ -155,9 +152,9 @@ const addHideCallHandler = (localMediaStream) => {
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
-/*!**************************************************!*\
-  !*** ./apps/calls/ts/scripts/call_rooms/main.ts ***!
-  \**************************************************/
+/*!***********************************************!*\
+  !*** ./apps/calls/ts/main/call_rooms/main.ts ***!
+  \***********************************************/
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_videos__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../components/videos */ "./apps/calls/ts/components/videos/index.ts");
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
@@ -169,149 +166,89 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __asyncValues = (undefined && undefined.__asyncValues) || function (o) {
-    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
-    var m = o[Symbol.asyncIterator], i;
-    return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i);
-    function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
-    function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
-};
 
 const RTC_CONFIGURATION = {
     iceServers: [{ urls: ['stun:stun2.1.google.com:19302'] }],
 };
 const peerConnection = new RTCPeerConnection(RTC_CONFIGURATION);
 let callRoomsWebSocket;
-let offer;
-let answer;
-let isClose = false;
 peerConnection.addEventListener('icecandidate', ({ candidate }) => {
     if (candidate) {
         console.log('Sending ICE candidate:', candidate);
-        callRoomsWebSocket.send(JSON.stringify({ type: "candidate.send" /* ActionType.candidateSend */, data: candidate }));
+        callRoomsWebSocket.send(JSON.stringify({ type: "candidate" /* ActionType.candidate */, data: candidate }));
     }
 });
-peerConnection.addEventListener('iceconnectionstatechange', () => {
-    if (['connecting', 'connected'].includes(peerConnection.connectionState)) {
-        callRoomsWebSocket.close();
-        isClose = true;
+peerConnection.addEventListener('connectionstatechange', () => {
+    if (peerConnection.connectionState === 'connected') {
+        callRoomsWebSocket.send(JSON.stringify({ type: "connected" /* ActionType.connected */ }));
     }
 });
 const startCommunication = () => {
     console.log('Start communication');
-    const roomId = location.pathname.split('/').at(-1);
+    const roomId = location.pathname.split('/').filter(Boolean).at(-1);
+    console.log(roomId);
     callRoomsWebSocket = new WebSocket(`ws://${location.host}/call-rooms/${roomId}/`);
     callRoomsWebSocket.onmessage = (_a) => __awaiter(void 0, [_a], void 0, function* ({ data }) {
-        var _b, e_1, _c, _d;
         const parsedData = JSON.parse(data);
         console.log('Received data:', parsedData);
-        if (!parsedData.data) {
-            return;
-        }
         switch (parsedData.type) {
-            case "who" /* ActionType.who */: {
-                return yield handleWhoAmI(parsedData.data);
+            case "offer" /* ActionType.offer */: {
+                yield setLocalOffer();
+                return sendOffer();
             }
-            case "offer.get" /* ActionType.offerGet */: {
-                yield setOffer(parsedData.data);
-                return yield sendAnswer();
+            case "answer" /* ActionType.answer */: {
+                yield setRemoteOffer(parsedData.data);
+                yield setLocalAnswer();
+                return sendAnswer();
             }
-            case "answer.get" /* ActionType.answerGet */: {
-                return yield setAnswer(parsedData.data);
+            case "final" /* ActionType.final */: {
+                return yield setRemoteAnswer(parsedData.data);
             }
-            case "candidate.get" /* ActionType.candidateGet */: {
-                try {
-                    for (var _e = true, _f = __asyncValues(parsedData.data), _g; _g = yield _f.next(), _b = _g.done, !_b; _e = true) {
-                        _d = _g.value;
-                        _e = false;
-                        const candidate = _d;
-                        yield addIceCandidate(candidate);
-                    }
-                }
-                catch (e_1_1) { e_1 = { error: e_1_1 }; }
-                finally {
-                    try {
-                        if (!_e && !_b && (_c = _f.return)) yield _c.call(_f);
-                    }
-                    finally { if (e_1) throw e_1.error; }
-                }
-                break;
+            case "candidate" /* ActionType.candidate */: {
+                return yield setCandidate(parsedData.data);
+            }
+            case "close" /* ActionType.close */: {
+                return void (location.href = window.homePath);
+            }
+            default: {
+                return console.error('Unknown Action type in the call room script!');
             }
         }
     });
 };
-const handleWhoAmI = (whoAmI) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log('Handle Who Am I', whoAmI);
-    switch (whoAmI) {
-        case 'starter': {
-            yield sendOffer();
-            return loopSends(getAnswer);
-        }
-        case 'answerer': {
-            return loopSends(getOffer);
-        }
-        default: {
-            return console.error('Incorrect whoAmI value');
-        }
-    }
+const setLocalOffer = () => __awaiter(void 0, void 0, void 0, function* () {
+    console.log('Create offer');
+    const offer = yield peerConnection.createOffer();
+    console.log('Set offer in local description');
+    yield peerConnection.setLocalDescription(offer);
 });
 const sendOffer = () => __awaiter(void 0, void 0, void 0, function* () {
     console.log('Send offer');
-    const offer = yield peerConnection.createOffer();
-    yield peerConnection.setLocalDescription(offer);
-    console.log('Set local offer', peerConnection.localDescription);
     callRoomsWebSocket.send(JSON.stringify({
-        type: "offer.send" /* ActionType.offerSend */,
+        type: "offer" /* ActionType.offer */,
         data: peerConnection.localDescription,
     }));
 });
-const setOffer = (receiverOffer) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log('Set offer');
-    offer = new RTCSessionDescription(receiverOffer);
-    yield peerConnection.setRemoteDescription(offer);
+const setRemoteOffer = (receivedOffer) => __awaiter(void 0, void 0, void 0, function* () {
     console.log('Set remote offer');
-    loopSends(getCandidate, 3000);
+    const offer = new RTCSessionDescription(receivedOffer);
+    yield peerConnection.setRemoteDescription(offer);
 });
-const sendAnswer = () => __awaiter(void 0, void 0, void 0, function* () {
-    console.log('Send answer');
+const setLocalAnswer = () => __awaiter(void 0, void 0, void 0, function* () {
+    console.log('Create answer');
     const answer = yield peerConnection.createAnswer();
     yield peerConnection.setLocalDescription(answer);
-    callRoomsWebSocket.send(JSON.stringify({ type: "answer.send" /* ActionType.answerSend */, data: peerConnection.localDescription }));
 });
-const setAnswer = (receivedAnswer) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log('Setting answer');
-    answer = new RTCSessionDescription(receivedAnswer);
+const sendAnswer = () => {
+    console.log('Send answer');
+    callRoomsWebSocket.send(JSON.stringify({ type: "answer" /* ActionType.answer */, data: peerConnection.localDescription }));
+};
+const setRemoteAnswer = (recievedAnswer) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log('Set remote answer');
+    const answer = new RTCSessionDescription(recievedAnswer);
     yield peerConnection.setRemoteDescription(answer);
-    loopSends(getCandidate, 3000);
 });
-const loopSends = (callback, time = 500) => {
-    const interval_id = setInterval(() => {
-        if (callback()) {
-            return clearInterval(interval_id);
-        }
-    }, time);
-};
-const getOffer = () => {
-    console.log('get offer', offer);
-    if (offer) {
-        return true;
-    }
-    return Boolean(callRoomsWebSocket.send(JSON.stringify({ type: "offer.get" /* ActionType.offerGet */ })));
-};
-const getAnswer = () => {
-    console.log('get answer');
-    if (answer) {
-        return true;
-    }
-    return Boolean(callRoomsWebSocket.send(JSON.stringify({ type: "answer.get" /* ActionType.answerGet */ })));
-};
-const getCandidate = () => {
-    if (isClose) {
-        return true;
-    }
-    return Boolean(callRoomsWebSocket.send(JSON.stringify({ type: "candidate.get" /* ActionType.candidateGet */ })));
-};
-const addIceCandidate = (iceCandidate) => __awaiter(void 0, void 0, void 0, function* () {
+const setCandidate = (iceCandidate) => __awaiter(void 0, void 0, void 0, function* () {
     console.log('Adding candidate');
     try {
         yield peerConnection.addIceCandidate(new RTCIceCandidate(iceCandidate));
@@ -321,7 +258,7 @@ const addIceCandidate = (iceCandidate) => __awaiter(void 0, void 0, void 0, func
     }
 });
 const init = () => __awaiter(void 0, void 0, void 0, function* () {
-    console.log('Inittializing media streams');
+    console.log('Initializing media streams');
     const localMediaStream = yield (0,_components_videos__WEBPACK_IMPORTED_MODULE_0__.createAndSetLocalMediaStream)();
     const remoteMediaStream = (0,_components_videos__WEBPACK_IMPORTED_MODULE_0__.createAndSetRemoteMediaStream)();
     localMediaStream.getTracks().forEach((track) => {
@@ -335,7 +272,7 @@ const init = () => __awaiter(void 0, void 0, void 0, function* () {
         });
     };
     startCommunication();
-    (0,_components_videos__WEBPACK_IMPORTED_MODULE_0__.addCloseCallHandler)();
+    (0,_components_videos__WEBPACK_IMPORTED_MODULE_0__.addCloseCallHandler)(() => callRoomsWebSocket.send(JSON.stringify({ type: "close" /* ActionType.close */ })));
     (0,_components_videos__WEBPACK_IMPORTED_MODULE_0__.addMuteCallHandler)(localMediaStream);
     (0,_components_videos__WEBPACK_IMPORTED_MODULE_0__.addHideCallHandler)(localMediaStream);
 });

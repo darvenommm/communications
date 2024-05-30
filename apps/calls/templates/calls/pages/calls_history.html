@@ -1,0 +1,20 @@
+{% extends "calls/base.html" %}
+
+
+{% block content %}
+<h1>Your calls</h1>
+{% if calls %}
+<ul>
+{% for call in calls %}
+  <li>
+    <p>Caller: {{ call.caller.full_name }}</p>
+    <p>Receiver: {{ call.receiver.full_name }}</p>
+    <p>start time: {{ call.start }}</p>
+    <p>duration {{ call.duration }}</p>
+  </li>
+{% endfor %}
+</ul>
+{% else %}
+<p>Not have any calls</p>
+{% endif %}
+{% endblock content %}

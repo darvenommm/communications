@@ -1,110 +1,148 @@
+import asyncio
+import datetime
 from typing import Any, cast
 
-from .types import ActionType, WhoAmI
+from .types import ActionType
 from calls.consumers.helpers import AsyncConsumerHelper
-from calls.consumers.storages import CallRoomsStorage
+from calls.consumers.storages import CallRoomsStorage, CallRoomType
 
 
 class CallRoomsConsumer(AsyncConsumerHelper):
     unique_prefix = "call_rooms"
     rooms_storage = CallRoomsStorage()
 
+    async def __wait_answerer(self, room: CallRoomType, timeout: int = 120) -> bool:
+        start = datetime.datetime.now()
+
+        while True:
+            if room["is_answerer_connected"] or (datetime.datetime.now() - start).seconds > timeout:
+                return room["is_answerer_connected"]
+
+            await asyncio.sleep(0.1)
+
     def get_room_id(self) -> str:
         return str(self.scope["url_route"]["kwargs"]["room_id"])
 
+    def get_another_subscriber_channel_name(self) -> str:
+        room = cast(CallRoomType, self.rooms_storage.get(self.get_room_id()))
+
+        return self.create_unique(
+            tuple(
+                filter(lambda subscriber_id: str(self.subscriber.id) != subscriber_id, room["ids"])
+            )[0]
+        )
+
     async def connect(self) -> None:
-        try:
-            subscriber_id = str(self.get_subscriber().id)
-        except ValueError:
+        subscriber = self.get_subscriber()
+
+        if not subscriber:
+            return
+        self.set_subscriber(subscriber)
+        subscriber_id = str(subscriber.id)
+
+        room_id = self.get_room_id()
+        room = self.rooms_storage.get(room_id)
+        if (not room) or (subscriber_id not in room["ids"]):
             return
 
-        room = self.rooms_storage.get(self.get_room_id())
-        if (not room) or (subscriber_id not in room.get("ids", [])):
-            return
-
+        await self.get_channel_layer().group_add(
+            self.create_unique(subscriber_id), self.channel_name
+        )
         await self.accept()
 
-        from_subscriber_id = cast(list[str], room["ids"])[0]
-        await self.send_json(
-            {
-                "type": ActionType.who,
-                "data": WhoAmI.starter if subscriber_id == from_subscriber_id else WhoAmI.answerer,
-            }
-        )
+        (from_subscriber_id, to_subscriber_id) = room["ids"]
+
+        match subscriber_id:
+            case id if id == from_subscriber_id:
+                await self.send_json({"type": ActionType.offer})
+            case id if id == to_subscriber_id:
+                self.rooms_storage.set_answerer_is_connected(room_id)
 
     async def disconnect(self, _: int) -> None:
         self.rooms_storage.remove(self.get_room_id())
+        await self.get_channel_layer().group_discard(
+            self.create_unique(str(self.subscriber.id)), self.channel_name
+        )
 
     async def receive_json(self, received_content: dict[str, Any]) -> None:
         match received_content.get("type"):
-            case ActionType.offer_send:
-                await self.handle_offer_send(received_content)
-            case ActionType.answer_send:
-                await self.handle_answer_send(received_content)
-            case ActionType.candidate_send:
-                await self.handle_candidate_send(received_content)
-            case ActionType.offer_get:
-                await self.handle_offer_get()
-            case ActionType.answer_get:
-                await self.handle_answer_get()
-            case ActionType.candidate_get:
-                await self.handle_candidate_get()
+            case ActionType.offer:
+                await self.handle_offer(received_content)
+            case ActionType.answer:
+                await self.handle_answer(received_content)
+            case ActionType.candidate:
+                await self.handle_candidate(received_content)
+            case ActionType.connected:
+                self.handle_connected()
+            case ActionType.close:
+                await self.handle_close()
 
-    async def handle_offer_send(self, received_content: dict[str, Any]) -> None:
-        room_id = self.get_room_id()
-        room = self.rooms_storage.get(room_id)
-
-        if not room:
-            return
-
-        self.rooms_storage.set_offer(room_id, received_content["data"])
-
-    async def handle_answer_send(self, received_content: dict[str, Any]) -> None:
-        room_id = self.get_room_id()
-        room = self.rooms_storage.get(room_id)
-
-        if not room:
-            return
-
-        self.rooms_storage.set_answer(room_id, received_content["data"])
-
-    async def handle_offer_get(self) -> None:
+    async def handle_offer(self, received_content: dict[str, Any]) -> None:
         room = self.rooms_storage.get(self.get_room_id())
-
         if not room:
             return
 
-        await self.send_json({"type": ActionType.offer_get, "data": room["offer"]})
+        result = await self.__wait_answerer(room)
+        if not result:
+            return
 
-    async def handle_answer_get(self) -> None:
+        await self.get_channel_layer().group_send(
+            self.get_another_subscriber_channel_name(),
+            {"type": ActionType.answer, "data": received_content["data"]},
+        )
+
+    async def handle_answer(self, received_content: dict[str, Any]) -> None:
         room = self.rooms_storage.get(self.get_room_id())
-
         if not room:
             return
 
-        await self.send_json({"type": ActionType.answer_get, "data": room["answer"]})
+        await self.get_channel_layer().group_send(
+            self.get_another_subscriber_channel_name(),
+            {"type": ActionType.final, "data": received_content["data"]},
+        )
 
-    async def handle_candidate_send(self, received_content: dict[str, Any]) -> None:
-        subscriber = self.get_subscriber()
+    async def handle_candidate(self, received_content: dict[str, Any]) -> None:
+        room = self.rooms_storage.get(self.get_room_id())
+        if not room:
+            return
+
+        result = await self.__wait_answerer(room)
+        if not result:
+            return
+
+        await self.get_channel_layer().group_send(
+            self.get_another_subscriber_channel_name(),
+            {"type": ActionType.candidate, "data": received_content["data"]},
+        )
+
+    def handle_connected(self) -> None:
         room_id = self.get_room_id()
         room = self.rooms_storage.get(room_id)
-
         if not room:
             return
 
-        need_subscriber_id = list(
-            filter(lambda subscriber_id: subscriber_id != str(subscriber.id), room["ids"])
-        )[0]
-        self.rooms_storage.add_candidate(room_id, need_subscriber_id, received_content["data"])
+        self.rooms_storage.set_start(room_id)
+        print("start", flush=True)
 
-    async def handle_candidate_get(self) -> None:
-        subscriber_id = str(self.get_subscriber().id)
-        room_id = self.get_room_id()
-        room = self.rooms_storage.get(room_id)
-
+    async def handle_close(self) -> None:
+        room = self.rooms_storage.get(self.get_room_id())
         if not room:
             return
 
-        candidates = self.rooms_storage.get_candidates(room_id, subscriber_id)
+        for id in room["ids"]:
+            unique_group_name = self.create_unique(id)
+            await self.get_channel_layer().group_send(unique_group_name, {"type": ActionType.close})
 
-        await self.send_json({"type": ActionType.candidate_get, "data": candidates})
+        await self.rooms_storage.add_room_to_db(room)
+
+    async def answer(self, received_content: dict[str, Any]) -> None:
+        await self.send_json(received_content)
+
+    async def final(self, received_content: dict[str, Any]) -> None:
+        await self.send_json(received_content)
+
+    async def candidate(self, received_content: dict[str, Any]) -> None:
+        await self.send_json(received_content)
+
+    async def close(self, _: dict[str, Any]) -> None:
+        await self.send_json({"type": ActionType.close})

@@ -1,15 +1,13 @@
 from django.views.generic import FormView
 from django.forms import ModelForm
 from django.http.response import HttpResponse
-from django.urls import reverse_lazy
 
 from subscribers.forms import RegistrationForm
 from subscribers.models import Subscriber
 
 
 class RegistrationView(FormView):
-    success_url = reverse_lazy("calls:home")
-    template_name = "subscribers/registration.html"
+    template_name = "subscribers/pages/registration.html"
     form_class = RegistrationForm
 
     def form_valid(self, form: ModelForm) -> HttpResponse:

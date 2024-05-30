@@ -11,7 +11,7 @@ const createCallAppTsPath = (...paths: string[]): string => {
   const fileName = paths.at(-1);
   paths = paths.slice(0, -1);
 
-  return path.join(callAppDirectoryPath, 'ts', 'scripts', ...paths, `${fileName}.ts`);
+  return path.join(callAppDirectoryPath, 'ts', 'main', ...paths, `${fileName}.ts`);
 };
 
 const config: Configuration = {

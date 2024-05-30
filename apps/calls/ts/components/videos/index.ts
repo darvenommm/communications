@@ -53,11 +53,8 @@ export const createAndSetRemoteMediaStream = (): MediaStream => {
   return (remoteVideo.srcObject = new MediaStream());
 };
 
-export const addCloseCallHandler = (callback?: () => void): void => {
-  closeButton.onclick = (): void => {
-    callback ? callback() : null;
-    location.href = window.homePath;
-  };
+export const addCloseCallHandler = (callback: () => void): void => {
+  closeButton.onclick = callback;
 };
 
 export const addMuteCallHandler = (localMediaStream: MediaStream): void => {
