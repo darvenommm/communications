@@ -2,10 +2,10 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "./apps/calls/ts/components/notify/index.ts":
-/*!**************************************************!*\
-  !*** ./apps/calls/ts/components/notify/index.ts ***!
-  \**************************************************/
+/***/ "./apps/calls/assets/ts/components/notify/index.ts":
+/*!*********************************************************!*\
+  !*** ./apps/calls/assets/ts/components/notify/index.ts ***!
+  \*********************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -38,10 +38,10 @@ const showNotify = (message, timeout = Infinity) => {
 
 /***/ }),
 
-/***/ "./apps/calls/ts/components/subscribers/index.ts":
-/*!*******************************************************!*\
-  !*** ./apps/calls/ts/components/subscribers/index.ts ***!
-  \*******************************************************/
+/***/ "./apps/calls/assets/ts/components/subscribers/index.ts":
+/*!**************************************************************!*\
+  !*** ./apps/calls/assets/ts/components/subscribers/index.ts ***!
+  \**************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -55,6 +55,7 @@ const SUBSCRIBERS_CONTAINER_CLASS = 'subscribers';
 const SUBSCRIBER_CLASS = 'subscribers__item';
 const SUBSCRIBER_ACTIVE_CLASS = `${SUBSCRIBER_CLASS}--active`;
 const SUBSCRIBER_CALL_BUTTON_CLASS = 'subscribers__call-button';
+const ONLINE_TEXT_CONTAINER_CLASS = 'subscribers__online';
 const subscribersContainer = document.querySelector(`.${SUBSCRIBERS_CONTAINER_CLASS}`);
 if (!subscribersContainer) {
     throw Error('Not found the subscribers container!');
@@ -63,10 +64,14 @@ const subscribers = subscribersContainer.querySelectorAll(`.${SUBSCRIBER_CLASS}`
 const goTroughSubscribers = (callback) => {
     for (const subscriber of subscribers) {
         const callButton = subscriber.querySelector(`.${SUBSCRIBER_CALL_BUTTON_CLASS}`);
+        const onlineTextContainer = subscriber.querySelector(`.${ONLINE_TEXT_CONTAINER_CLASS}`);
         if (!callButton) {
             throw Error('Not found a call button in a subscriber!');
         }
-        const needBreak = callback(subscriber, callButton);
+        if (!onlineTextContainer) {
+            throw Error('Not found a online text container in a subscriber!');
+        }
+        const needBreak = callback(subscriber, callButton, onlineTextContainer);
         if (needBreak) {
             break;
         }
@@ -80,15 +85,23 @@ const getSubscriberData = (subscriber) => {
     }
     return { id: subscriberId, fullName: subscriberFullName };
 };
+const makeSubscriberActive = (subscriber, onlineTextContainer) => {
+    subscriber.classList.add(SUBSCRIBER_ACTIVE_CLASS);
+    onlineTextContainer.textContent = 'Online';
+};
+const makeSubscriberInactive = (subscriber, onlineTextContainer) => {
+    subscriber.classList.remove(SUBSCRIBER_ACTIVE_CLASS);
+    onlineTextContainer.textContent = 'Offline';
+};
 const markOnlineSubscribers = (ids) => {
-    goTroughSubscribers((subscriber, callButton) => {
+    goTroughSubscribers((subscriber, callButton, onlineTextContainer) => {
         const { id: subscriberId } = getSubscriberData(subscriber);
         if (ids[subscriberId]) {
-            subscriber.classList.add(SUBSCRIBER_ACTIVE_CLASS);
+            makeSubscriberActive(subscriber, onlineTextContainer);
             callButton.disabled = false;
         }
         else {
-            subscriber.classList.remove(SUBSCRIBER_ACTIVE_CLASS);
+            makeSubscriberInactive(subscriber, onlineTextContainer);
             callButton.disabled = true;
         }
     });
@@ -100,10 +113,10 @@ const markOnlineSubscriber = (id) => {
         delete onlineUsersHistory[id];
         return;
     }
-    goTroughSubscribers((subscriber, callButton) => {
+    goTroughSubscribers((subscriber, callButton, onlineTextContainer) => {
         const { id: subscriberId } = getSubscriberData(subscriber);
         if (subscriberId === id) {
-            subscriber.classList.add(SUBSCRIBER_ACTIVE_CLASS);
+            makeSubscriberActive(subscriber, onlineTextContainer);
             callButton.disabled = false;
             return true;
         }
@@ -111,10 +124,10 @@ const markOnlineSubscriber = (id) => {
 };
 const discardOnlineSubscriber = (id) => {
     const discardUserEvent = setTimeout(() => {
-        goTroughSubscribers((subscriber, callButton) => {
+        goTroughSubscribers((subscriber, callButton, onlineTextContainer) => {
             const { id: subscriberId } = getSubscriberData(subscriber);
             if (subscriberId === id) {
-                subscriber.classList.remove(SUBSCRIBER_ACTIVE_CLASS);
+                makeSubscriberInactive(subscriber, onlineTextContainer);
                 callButton.disabled = true;
                 return true;
             }
@@ -192,12 +205,12 @@ const setCallButtonClickHandler = (callback) => {
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
-/*!************************************************!*\
-  !*** ./apps/calls/ts/main/subscribers/main.ts ***!
-  \************************************************/
+/*!*******************************************************!*\
+  !*** ./apps/calls/assets/ts/main/subscribers/main.ts ***!
+  \*******************************************************/
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _components_subscribers__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../components/subscribers */ "./apps/calls/ts/components/subscribers/index.ts");
-/* harmony import */ var _components_notify__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../components/notify */ "./apps/calls/ts/components/notify/index.ts");
+/* harmony import */ var _components_subscribers__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../components/subscribers */ "./apps/calls/assets/ts/components/subscribers/index.ts");
+/* harmony import */ var _components_notify__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../components/notify */ "./apps/calls/assets/ts/components/notify/index.ts");
 
 
 const subscribersWebSocket = new WebSocket(`ws://${location.host}/subscribers/`);

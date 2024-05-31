@@ -4,6 +4,7 @@ const SUBSCRIBER_CLASS = 'subscribers__item';
 const SUBSCRIBER_ACTIVE_CLASS = `${SUBSCRIBER_CLASS}--active`;
 
 const SUBSCRIBER_CALL_BUTTON_CLASS = 'subscribers__call-button';
+const ONLINE_TEXT_CONTAINER_CLASS = 'subscribers__online';
 
 const subscribersContainer = document.querySelector<HTMLUListElement>(`.${SUBSCRIBERS_CONTAINER_CLASS}`);
 
@@ -13,16 +14,25 @@ if (!subscribersContainer) {
 
 const subscribers = subscribersContainer.querySelectorAll<HTMLLIElement>(`.${SUBSCRIBER_CLASS}`);
 
-type IterateSubscriberCallback = (subscriber: HTMLLIElement, callButton: HTMLButtonElement) => void | boolean;
+type IterateSubscriberCallback = (
+  subscriber: HTMLLIElement,
+  callButton: HTMLButtonElement,
+  onlineTextContainer: HTMLParagraphElement,
+) => void | boolean;
 const goTroughSubscribers = (callback: IterateSubscriberCallback) => {
   for (const subscriber of subscribers) {
     const callButton = subscriber.querySelector<HTMLButtonElement>(`.${SUBSCRIBER_CALL_BUTTON_CLASS}`);
+    const onlineTextContainer = subscriber.querySelector<HTMLParagraphElement>(`.${ONLINE_TEXT_CONTAINER_CLASS}`);
 
     if (!callButton) {
       throw Error('Not found a call button in a subscriber!');
     }
 
-    const needBreak = callback(subscriber, callButton);
+    if (!onlineTextContainer) {
+      throw Error('Not found a online text container in a subscriber!');
+    }
+
+    const needBreak = callback(subscriber, callButton, onlineTextContainer);
 
     if (needBreak) {
       break;
@@ -41,15 +51,25 @@ const getSubscriberData = (subscriber: HTMLElement): { id: string; fullName: str
   return { id: subscriberId, fullName: subscriberFullName };
 };
 
+const makeSubscriberActive = (subscriber: HTMLElement, onlineTextContainer: HTMLElement): void => {
+  subscriber.classList.add(SUBSCRIBER_ACTIVE_CLASS);
+  onlineTextContainer.textContent = 'Online';
+};
+
+const makeSubscriberInactive = (subscriber: HTMLElement, onlineTextContainer: HTMLElement): void => {
+  subscriber.classList.remove(SUBSCRIBER_ACTIVE_CLASS);
+  onlineTextContainer.textContent = 'Offline';
+};
+
 export const markOnlineSubscribers = (ids: Record<string, true>): void => {
-  goTroughSubscribers((subscriber, callButton) => {
+  goTroughSubscribers((subscriber, callButton, onlineTextContainer) => {
     const { id: subscriberId } = getSubscriberData(subscriber);
 
     if (ids[subscriberId]) {
-      subscriber.classList.add(SUBSCRIBER_ACTIVE_CLASS);
+      makeSubscriberActive(subscriber, onlineTextContainer);
       callButton.disabled = false;
     } else {
-      subscriber.classList.remove(SUBSCRIBER_ACTIVE_CLASS);
+      makeSubscriberInactive(subscriber, onlineTextContainer);
       callButton.disabled = true;
     }
   });
@@ -64,11 +84,11 @@ export const markOnlineSubscriber = (id: string): void => {
     return;
   }
 
-  goTroughSubscribers((subscriber, callButton) => {
+  goTroughSubscribers((subscriber, callButton, onlineTextContainer) => {
     const { id: subscriberId } = getSubscriberData(subscriber);
 
     if (subscriberId === id) {
-      subscriber.classList.add(SUBSCRIBER_ACTIVE_CLASS);
+      makeSubscriberActive(subscriber, onlineTextContainer);
       callButton.disabled = false;
 
       return true;
@@ -78,11 +98,11 @@ export const markOnlineSubscriber = (id: string): void => {
 
 export const discardOnlineSubscriber = (id: string): void => {
   const discardUserEvent = setTimeout((): void => {
-    goTroughSubscribers((subscriber, callButton) => {
+    goTroughSubscribers((subscriber, callButton, onlineTextContainer) => {
       const { id: subscriberId } = getSubscriberData(subscriber);
 
       if (subscriberId === id) {
-        subscriber.classList.remove(SUBSCRIBER_ACTIVE_CLASS);
+        makeSubscriberInactive(subscriber, onlineTextContainer);
         callButton.disabled = true;
 
         return true;

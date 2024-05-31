@@ -2,10 +2,10 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "./apps/calls/ts/components/notify/index.ts":
-/*!**************************************************!*\
-  !*** ./apps/calls/ts/components/notify/index.ts ***!
-  \**************************************************/
+/***/ "./apps/calls/assets/ts/components/notify/index.ts":
+/*!*********************************************************!*\
+  !*** ./apps/calls/assets/ts/components/notify/index.ts ***!
+  \*********************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -38,10 +38,10 @@ const showNotify = (message, timeout = Infinity) => {
 
 /***/ }),
 
-/***/ "./apps/calls/ts/components/videos/index.ts":
-/*!**************************************************!*\
-  !*** ./apps/calls/ts/components/videos/index.ts ***!
-  \**************************************************/
+/***/ "./apps/calls/assets/ts/components/videos/index.ts":
+/*!*********************************************************!*\
+  !*** ./apps/calls/assets/ts/components/videos/index.ts ***!
+  \*********************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -188,12 +188,12 @@ const addHideCallHandler = (localMediaStream) => {
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
-/*!***********************************************!*\
-  !*** ./apps/calls/ts/main/call_rooms/main.ts ***!
-  \***********************************************/
+/*!******************************************************!*\
+  !*** ./apps/calls/assets/ts/main/call_rooms/main.ts ***!
+  \******************************************************/
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _components_videos__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../components/videos */ "./apps/calls/ts/components/videos/index.ts");
-/* harmony import */ var _components_notify__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../components/notify */ "./apps/calls/ts/components/notify/index.ts");
+/* harmony import */ var _components_videos__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../components/videos */ "./apps/calls/assets/ts/components/videos/index.ts");
+/* harmony import */ var _components_notify__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../components/notify */ "./apps/calls/assets/ts/components/notify/index.ts");
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -284,9 +284,9 @@ const sendAnswer = () => {
     console.log('Send answer');
     callRoomsWebSocket.send(JSON.stringify({ type: "answer" /* ActionType.answer */, data: peerConnection.localDescription }));
 };
-const setRemoteAnswer = (recievedAnswer) => __awaiter(void 0, void 0, void 0, function* () {
+const setRemoteAnswer = (receivedAnswer) => __awaiter(void 0, void 0, void 0, function* () {
     console.log('Set remote answer');
-    const answer = new RTCSessionDescription(recievedAnswer);
+    const answer = new RTCSessionDescription(receivedAnswer);
     yield peerConnection.setRemoteDescription(answer);
 });
 const setCandidate = (iceCandidate) => __awaiter(void 0, void 0, void 0, function* () {

@@ -2,10 +2,10 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "./apps/calls/ts/components/dialog/index.ts":
-/*!**************************************************!*\
-  !*** ./apps/calls/ts/components/dialog/index.ts ***!
-  \**************************************************/
+/***/ "./apps/calls/assets/ts/components/dialog/index.ts":
+/*!*********************************************************!*\
+  !*** ./apps/calls/assets/ts/components/dialog/index.ts ***!
+  \*********************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -56,10 +56,10 @@ const showDialog = (message, cancelCallback, successCallback, timeout = Infinity
 
 /***/ }),
 
-/***/ "./apps/calls/ts/components/notify/index.ts":
-/*!**************************************************!*\
-  !*** ./apps/calls/ts/components/notify/index.ts ***!
-  \**************************************************/
+/***/ "./apps/calls/assets/ts/components/notify/index.ts":
+/*!*********************************************************!*\
+  !*** ./apps/calls/assets/ts/components/notify/index.ts ***!
+  \*********************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -151,12 +151,12 @@ const showNotify = (message, timeout = Infinity) => {
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
-/*!************************************************!*\
-  !*** ./apps/calls/ts/main/call_offers/main.ts ***!
-  \************************************************/
+/*!*******************************************************!*\
+  !*** ./apps/calls/assets/ts/main/call_offers/main.ts ***!
+  \*******************************************************/
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _components_notify__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../components/notify */ "./apps/calls/ts/components/notify/index.ts");
-/* harmony import */ var _components_dialog__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../components/dialog */ "./apps/calls/ts/components/dialog/index.ts");
+/* harmony import */ var _components_notify__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../components/notify */ "./apps/calls/assets/ts/components/notify/index.ts");
+/* harmony import */ var _components_dialog__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../components/dialog */ "./apps/calls/assets/ts/components/dialog/index.ts");
 
 
 window.callOffersWebSocket.addEventListener('message', ({ data }) => {

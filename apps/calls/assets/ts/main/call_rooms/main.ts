@@ -108,9 +108,9 @@ const sendAnswer = (): void => {
   callRoomsWebSocket.send(JSON.stringify({ type: ActionType.answer, data: peerConnection.localDescription }));
 };
 
-const setRemoteAnswer = async (recievedAnswer: RTCSessionDescription): Promise<void> => {
+const setRemoteAnswer = async (receivedAnswer: RTCSessionDescription): Promise<void> => {
   console.log('Set remote answer');
-  const answer = new RTCSessionDescription(recievedAnswer);
+  const answer = new RTCSessionDescription(receivedAnswer);
   await peerConnection.setRemoteDescription(answer);
 };
 

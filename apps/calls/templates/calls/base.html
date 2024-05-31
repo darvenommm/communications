@@ -1,4 +1,5 @@
 {% load static %}
+{% load include_header %}
 
 <!DOCTYPE html>
 <html lang="{{ language|default:"en" }}">
@@ -11,41 +12,14 @@
     {% block head %}{% endblock head %}
   </head>
   <body>
-    <header class="header">
-      <div>
-      {% if user.is_authenticated %}
-        <form action="{% url 'auth:log_out' %}" method="post">
-          {% csrf_token %}
-          <button type="submit">log out</button>
-        </form>
-        <p>
-          <a href="{% url 'calls_history' %}">calls history</a>
-        </p>
-      {% else %}
-        <p>
-          <a href="{% url 'auth:log_in' %}">log in</a>
-        </p>
-        <p>
-          <a href="{% url 'auth:registration' %}">registration</a>
-        </p>
-      {% endif %}
-      </div>
-    </header>
+    {% include_header current_path=request.path is_auth=user.is_authenticated %}
     <main>
-    {% block content %}{% endblock content %}
-    </main>
-
-    <div class="notify">
-      <p class="notify__text"></p>
-    </div>
-
-    <div class="dialog">
-      <p class="dialog__text"></p>
-      <div class="dialog__buttons">
-        <button class="dialog__yes" type="button">Yes</button>
-        <button class="dialog__no" type="button">No</button>
+      <div class="container">
+        {% block content %}{% endblock content %}
       </div>
-    </div>
+    </main>
+    {% include "./components/notify.html" %}
+    {% include "./components/dialog.html" %}
     <script>
       window.homePath = "{% url 'home' %}";
       window.callOffersWebSocket = new WebSocket(`ws://${location.host}/call-offers/`);
