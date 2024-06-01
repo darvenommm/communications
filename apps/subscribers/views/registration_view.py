@@ -1,4 +1,5 @@
 from django.views.generic import FormView
+from django.urls import reverse_lazy
 from django.forms import ModelForm
 from django.http.response import HttpResponse
 
@@ -9,6 +10,7 @@ from subscribers.models import Subscriber
 class RegistrationView(FormView):
     template_name = "subscribers/pages/registration.html"
     form_class = RegistrationForm
+    success_url = reverse_lazy("home")
 
     def form_valid(self, form: ModelForm) -> HttpResponse:
         cleaned_data = form.clean()

@@ -21,20 +21,20 @@
       data-operators="[{{ operators|join:"," }}]"
       data-subscriber-full-name="{{ current_user.full_name }}"
     >
-      <p class="subscribers__online">Offline</p>
-      <h2>Full name: {{ current_user.full_name }}</h2>
-      <p>Username: {{ current_user.username }}</p>
+      <p class="subscribers__online bold-text">Offline</p>
+      <h2><span class="bold-text">Full name:</span> {{ current_user.full_name }}</h2>
+      <p><span class="bold-text">Username:</span> {{ current_user.username }}</p>
       {% if operators %}
-      <p>Operators:</p>
+      <p class="bold-text">Operators:</p>
       <ul class="subscribers__operators">
       {% for operator in subscriber.operators.all %}
         <li class="subscribers__operator">{{ operator.title }}</li>
       {% endfor %}
       </ul>
       {% else %}
-      <p>Don't exist any operators</p>
+      <p class="bold-text">Don't exist any operators</p>
       {% endif %}
-      <button class="subscribers__call-button" type="button" disabled>Call this user</button>
+      <button class="subscribers__call-button button" type="button" disabled>Call this user</button>
     </li>
   {% endif %}
   {% endwith %}

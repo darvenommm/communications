@@ -2,9 +2,13 @@
 
 {% block content %}
 <h1>Registration</h1>
+{% if not user.is_authenticated %}
 <form method="post">
   {% csrf_token %}
   {{ form.as_p }}
   <button type="submit">Create</button>
 </form>
+{% else %}
+<p>You're registered</p>
+{% endif %}
 {% endblock content %}

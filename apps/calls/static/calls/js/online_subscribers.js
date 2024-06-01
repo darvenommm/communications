@@ -213,17 +213,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_notify__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../components/notify */ "./apps/calls/assets/ts/components/notify/index.ts");
 
 
-const subscribersWebSocket = new WebSocket(`ws://${location.host}/subscribers/`);
-subscribersWebSocket.addEventListener('open', () => {
+window.subscribersWebSocket.addEventListener('open', () => {
     window.addEventListener('focus', () => {
-        subscribersWebSocket.send(JSON.stringify({ type: "subscribers.online" /* ActionType.subscribersOnline */ }));
+        window.subscribersWebSocket.send(JSON.stringify({ type: "subscribers.online" /* ActionType.subscribersOnline */ }));
     });
     (0,_components_subscribers__WEBPACK_IMPORTED_MODULE_0__.setCallButtonClickHandler)((subscriberId, subscriberFullName) => {
         window.callOffersWebSocket.send(JSON.stringify({ type: "offer.connection" /* callOffersActionType.offerConnection */, data: subscriberId }));
         (0,_components_notify__WEBPACK_IMPORTED_MODULE_1__.showNotify)(`You offered the user: ${subscriberFullName}`);
     });
 });
-subscribersWebSocket.addEventListener('message', ({ data }) => {
+window.subscribersWebSocket.addEventListener('message', ({ data }) => {
     const parsedData = JSON.parse(data);
     switch (parsedData.type) {
         case "subscribers.online" /* ActionType.subscribersOnline */: {

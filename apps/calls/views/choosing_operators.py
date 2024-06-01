@@ -1,4 +1,4 @@
-from typing import cast
+from typing import Any, cast
 
 from django import forms
 from django.urls import reverse_lazy
@@ -13,6 +13,12 @@ class ChoosingOperatorsView(LoginRequiredMixin, FormView):
     template_name = "calls/pages/choosing_operators.html"
     form_class = ChoosingOperatorsForm
     success_url = reverse_lazy("home")
+
+    def get_context_data(self, **kwargs) -> dict[str, Any]:
+        user = cast(Subscriber, self.request.user)
+        extra_content = super().get_context_data(**kwargs)
+
+        return {**extra_content, "operators": getattr(user, "operators").all()}
 
     def form_valid(self, form: forms.Form):
         subscriber = cast(Subscriber, self.request.user)

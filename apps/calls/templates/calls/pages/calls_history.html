@@ -4,13 +4,13 @@
 {% block content %}
 <h1>Your calls</h1>
 {% if calls %}
-<ul>
+<ul class="calls-history">
 {% for call in calls %}
-  <li>
-    <p>Caller: {{ call.caller.full_name }}</p>
-    <p>Receiver: {{ call.receiver.full_name }}</p>
-    <p>start time: {{ call.start }}</p>
-    <p>duration {{ call.duration }}</p>
+  <li class="calls-history__item">
+    <p><span class="bold-text">Caller:</span> {{ call.caller.full_name }}</p>
+    <p><span class="bold-text">Receiver:</span> {{ call.receiver.full_name }}</p>
+    <p><span class="bold-text">Start time:</span> {{ call.start }}</p>
+    <p><span class="bold-text">Duration</span> {{ call.duration }}</p>
   </li>
 {% endfor %}
 </ul>

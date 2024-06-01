@@ -3,9 +3,10 @@
 
 {% block content %}
 <h1>Choosing operators</h1>
-<form method="post">
+<p>User's operators: {{ operators|join:", "|default:"None" }}</p>
+<form class="choosing" method="post">
   {% csrf_token %}
   {{ form }}
-  <button type="submit">Set operators</button>
+  <button class="choosing__button button" type="submit">Set operators</button>
 </form>
 {% endblock content %}

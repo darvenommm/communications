@@ -1,8 +1,6 @@
 from typing import Any, cast
 from uuid import uuid4
 
-from subscribers.models import Subscriber
-
 from .types import ActionType
 from calls.consumers.helpers import AsyncConsumerHelper
 from calls.consumers.storages import CallOffersStorage, CallRoomsStorage

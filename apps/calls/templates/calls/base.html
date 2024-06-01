@@ -22,6 +22,7 @@
     {% include "./components/dialog.html" %}
     <script>
       window.homePath = "{% url 'home' %}";
+      window.subscribersWebSocket = new WebSocket(`ws://${location.host}/subscribers/`);
       window.callOffersWebSocket = new WebSocket(`ws://${location.host}/call-offers/`);
     </script>
   </body>

@@ -27,15 +27,15 @@
       </ul>
     </nav>
     <div class="header__auth">
-    {% if user.is_authenticated %}
+    {% if is_auth %}
       <form class="header__log-out" action="{% url 'auth:log_out' %}" method="post">
         {% csrf_token %}
-        <button class="header__link" type="submit">log out</button>
+        <button class="header__link" type="submit">Log out</button>
       </form>
     {% else %}
       <div class="header__entry-links">
         <a class="header__link" href="{% url 'auth:log_in' %}">Log in</a>
-        <a class="header__link" href="{% url 'auth:registration' %}">Registration</a>
+        <a class="header__link" href="{% url 'auth:registration' %}">Registrate</a>
       </div>
     {% endif %}
     </div>

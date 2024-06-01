@@ -82,8 +82,8 @@ if (!closeButton || !muteButton || !hideButton) {
 const CONSTRAINTS = {
     audio: true,
     video: {
-        width: { min: 640, ideal: 720, max: 720 },
-        height: { min: 480, ideal: 720, max: 720 },
+        width: { min: 300, ideal: 500, max: 500 },
+        height: { min: 300, ideal: 500, max: 500 },
         facingMode: 'user',
     },
 };

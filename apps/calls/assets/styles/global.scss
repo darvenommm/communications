@@ -28,3 +28,39 @@ button[disabled] {
   margin: 0 auto;
   padding: 0 10px;
 }
+
+.bold-text {
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.button {
+  color: vars.$main-text-color;
+  font-size: 16px;
+  text-decoration: none;
+
+  background-color: darken(vars.$active-color, 25%);
+  border-radius: 15px;
+  transition: opacity 250ms;
+
+  padding: 5px 10px;
+  border: none;
+
+  &:hover {
+    opacity: 0.7;
+  }
+
+  &:active {
+    opacity: 0.4;
+  }
+
+  &[disabled] {
+    background-color: #9f9f9f;
+    opacity: 0.5;
+
+    &:hover,
+    &:active {
+      opacity: 0.5;
+    }
+  }
+}

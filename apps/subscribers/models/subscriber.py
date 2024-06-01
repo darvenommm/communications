@@ -47,7 +47,7 @@ class Subscriber(UuidMixin, AbstractUser):
 
     @property
     def full_name(self) -> str:
-        return self.get_username()
+        return self.get_full_name()
 
     def __str__(self) -> str:
         full_name = cast(str, self.full_name).strip()

@@ -1,0 +1,21 @@
+@use '../variables' as vars;
+
+.video {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+
+  margin-bottom: 20px;
+
+  video {
+    background-color: vars.$extra-bg-color;
+
+    width: 500px;
+    height: 500px;
+
+    @media (max-width: 500px) {
+      width: 100%;
+    }
+  }
+}
+

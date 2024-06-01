@@ -12,7 +12,7 @@ class RedisStorage(ABC):
         if cls.__current:
             return cls.__current
 
-        cache.set(cls.key, {})
+        cache.set(cls.key, {}, timeout=None)
         cls.__current = super().__new__(cls, *args, **kwargs)
         return cls.__current
 

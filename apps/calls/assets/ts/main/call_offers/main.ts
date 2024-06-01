@@ -24,7 +24,7 @@ window.callOffersWebSocket.addEventListener('message', ({ data }): void => {
     }
 
     case ActionType.offerCancel: {
-      showNotify('Your call request was refused!');
+      showNotify('Your call request was refused!', 5000);
       break;
     }
 

@@ -11,11 +11,9 @@ import { ActionType as callOffersActionType } from '../call_offers/types';
 import { ActionType } from './types';
 import type { WebSocketEventData } from '../../types/websocket';
 
-const subscribersWebSocket = new WebSocket(`ws://${location.host}/subscribers/`);
-
-subscribersWebSocket.addEventListener('open', (): void => {
+window.subscribersWebSocket.addEventListener('open', (): void => {
   window.addEventListener('focus', (): void => {
-    subscribersWebSocket.send(JSON.stringify({ type: ActionType.subscribersOnline }));
+    window.subscribersWebSocket.send(JSON.stringify({ type: ActionType.subscribersOnline }));
   });
 
   setCallButtonClickHandler((subscriberId, subscriberFullName): void => {
@@ -24,7 +22,7 @@ subscribersWebSocket.addEventListener('open', (): void => {
   });
 });
 
-subscribersWebSocket.addEventListener('message', ({ data }): void => {
+window.subscribersWebSocket.addEventListener('message', ({ data }): void => {
   const parsedData: WebSocketEventData<ActionType> = JSON.parse(data);
 
   switch (parsedData.type) {

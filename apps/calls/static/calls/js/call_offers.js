@@ -170,7 +170,7 @@ window.callOffersWebSocket.addEventListener('message', ({ data }) => {
             break;
         }
         case "offer.cancel" /* ActionType.offerCancel */: {
-            (0,_components_notify__WEBPACK_IMPORTED_MODULE_0__.showNotify)('Your call request was refused!');
+            (0,_components_notify__WEBPACK_IMPORTED_MODULE_0__.showNotify)('Your call request was refused!', 5000);
             break;
         }
         case "offer.success" /* ActionType.offerSuccess */: {

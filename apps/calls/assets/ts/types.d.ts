@@ -5,5 +5,6 @@ declare global {
     homePath: string;
 
     callOffersWebSocket: WebSocket;
+    subscribersWebSocket: WebSocket;
   }
 }
