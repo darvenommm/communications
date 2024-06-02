@@ -44,11 +44,11 @@ const getSubscriberData = (subscriber: HTMLElement): { id: string; fullName: str
   const subscriberId = subscriber.dataset.subscriberId;
   const subscriberFullName = subscriber.dataset.subscriberFullName;
 
-  if (!subscriberId || !subscriberFullName) {
-    throw Error('Not found subscriber id or full name in dataset in the current subscriber!');
+  if (!subscriberId) {
+    throw Error('Not found subscriber id in dataset in the current subscriber!');
   }
 
-  return { id: subscriberId, fullName: subscriberFullName };
+  return { id: subscriberId, fullName: subscriberFullName || 'User without name' };
 };
 
 const makeSubscriberActive = (subscriber: HTMLElement, onlineTextContainer: HTMLElement): void => {

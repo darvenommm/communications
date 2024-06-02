@@ -1,4 +1,4 @@
-from typing import cast, TypeAlias
+from typing import cast, Type, TypeAlias
 
 from django.db import models
 from django.conf import settings
@@ -17,7 +17,8 @@ class ApiStatusTestCaseWrapper:
     class ApiStatusTestCase(TestCase):
         entity_name: str
         entity_data: dict
-        queryset: models.QuerySet
+        model: Type[models.Model]
+        field_for_finding: str
 
         do_it_use_token: bool = True
 
@@ -46,8 +47,7 @@ class ApiStatusTestCaseWrapper:
 
         @classmethod
         def add_to_test_users(cls, *test_users: test.APIClient) -> None:
-            for test_user in test_users:
-                cls.__test_users += (test_user,)
+            cls.__test_users += (*test_users,)
 
         @classmethod
         def reset_test_users(cls) -> None:
@@ -72,10 +72,11 @@ class ApiStatusTestCaseWrapper:
                 response = cast(
                     Response, test_user.post(self.__entities_url, self.entity_data, format="json")
                 )
+
                 self.assertEqual(response.status_code, self.create_statuses[index])
 
-                created_entity_pk = cast(str, response.json().get("id"))
-                self.__delete_by_entity_url(self.__get_entity_url(created_entity_pk))
+                if response.status_code == 201:
+                    self.__delete_by_entity_url(self.__get_entity_url(self.__find_entity_id()))
 
         def test_put_update(self) -> None:
             entity_url = self.__create_and_get_entity_url()
@@ -114,14 +115,19 @@ class ApiStatusTestCaseWrapper:
 
         @classmethod
         def __create_authorized(cls) -> test.APIClient:
-            authorized_user_created_data = cls.__create_unique_user_data("token_authorized")
-            authorized_user = get_user_model().objects.create(**authorized_user_created_data)
+            authorized_user_created_data = cls.__create_unique_user_data("authorized")
+            authorized_user = get_user_model()(**authorized_user_created_data)
+            authorized_user.set_password(authorized_user_created_data["password"])
+            authorized_user.save()
 
             authorized_client = test.APIClient()
-            authorized_client.login(
+            is_login = authorized_client.login(
                 username=authorized_user_created_data["username"],
                 password=authorized_user_created_data["password"],
             )
+
+            if not is_login:
+                raise ValueError("Auth user is not login!")
 
             if cls.do_it_use_token:
                 user_token = cast(Token, getattr(authorized_user, "auth_token")).key
@@ -132,18 +138,18 @@ class ApiStatusTestCaseWrapper:
         @classmethod
         def __create_admin(cls) -> test.APIClient:
             admin_created_data = cls.__create_unique_user_data("admin")
-            admin_user = get_user_model().objects.create(
-                **admin_created_data,
-                is_staff=True,
-                is_superuser=True,
-            )
+            admin_user = get_user_model()(**admin_created_data, is_staff=True, is_superuser=True)
+            admin_user.set_password(admin_created_data["password"])
+            admin_user.save()
 
             admin_client = test.APIClient()
-
-            admin_client.login(
+            is_login = admin_client.login(
                 username=admin_created_data["username"],
                 password=admin_created_data["password"],
             )
+
+            if not is_login:
+                raise ValueError("Admin is not login!")
 
             if cls.do_it_use_token:
                 admin_token = cast(Token, getattr(admin_user, "auth_token")).key
@@ -173,27 +179,36 @@ class ApiStatusTestCaseWrapper:
                 Response, self.admin.post(self.__entities_url, self.entity_data, format="json")
             )
 
-            print(
-                self.entity_name,
-                response.data,
-                flush=True,
-            )
-
             if response.status_code != 201:
-                raise ValueError("Incorrect post method returned status code")
+                raise ValueError("Incorrect post method returned status code!")
 
             returned_data = response.json()
 
             if not isinstance(returned_data, dict):
-                raise TypeError("Incorrect post method returned value")
+                raise TypeError("Incorrect post method returned value!")
 
-            print(self.queryset.all(), flush=True)
-            last_entity = self.queryset.order_by("-created_at")[0]
-            entity_id = str(last_entity.id)
+            return self.__get_entity_url(self.__find_entity_id())
 
-            print(last_entity, flush=True)
+        def __find_entity_id(self) -> str:
+            needed_entity = None
+            entities = self.model.objects.all()
 
-            return self.__get_entity_url(entity_id)
+            if not hasattr(self, "field_for_finding"):
+                needed_entity = entities.last()
+            else:
+                for entity in entities:
+                    entity_value = self.entity_data[self.field_for_finding]
+                    if getattr(entity, self.field_for_finding) == entity_value:
+                        needed_entity = entity
+                        break
+
+            if needed_entity is None:
+                raise ValueError("Don't create a new entity!")
+
+            if not hasattr(needed_entity, "id"):
+                raise ValueError("Entity doesn't have a id attribute")
+
+            return str(getattr(needed_entity, "id"))
 
         def __delete_by_entity_url(self, entity_url: str) -> None:
             self.admin.delete(entity_url)

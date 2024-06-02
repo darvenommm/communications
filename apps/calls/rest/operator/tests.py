@@ -5,7 +5,7 @@ from library.rest.api_status_test_case import ApiStatusTestCaseWrapper
 
 
 class OperatorTestCase(ApiStatusTestCaseWrapper.ApiStatusTestCase):
-    queryset = Operator.objects.all()
+    model = Operator
     entity_name = "operators"
     entity_data = {
         "title": "test_title",

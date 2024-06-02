@@ -15,9 +15,7 @@ class SubscriberCallViewSet(viewsets.ModelViewSet):
             return super().filter_queryset(queryset)
 
         user_pk = getattr(self.request.user, "pk")
-        queryset = queryset.filter(
-            models.Q(caller__user_id=user_pk) | models.Q(receiver__user_id=user_pk)
-        )
+        queryset = queryset.filter(models.Q(caller_id=user_pk) | models.Q(receiver_id=user_pk))
 
         return super().filter_queryset(queryset)
 

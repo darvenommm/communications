@@ -1,6 +1,5 @@
 from typing import cast
 
-from django.contrib.auth import get_user_model
 from rest_framework.authtoken.models import Token
 from rest_framework import status, test
 
@@ -12,13 +11,20 @@ from library.rest.api_status_test_case import ApiStatusTestCaseWrapper
 class SubscriberCallTestCase(ApiStatusTestCaseWrapper.ApiStatusTestCase):
     __user_data = {"first_name": "first_name", "last_name": "last_name", "password": "password"}
 
-    __caller_user_data = {"username": "test_1", **__user_data}
-    __caller_data = {"passport": "0000-000000", "birth_date": "2022-12-27"}
+    __caller_data = {
+        "username": "test_1",
+        "passport": "0000-000000",
+        "birth_date": "2022-12-27",
+        **__user_data,
+    }
+    __receiver_data = {
+        "username": "test_2",
+        "passport": "0000-000001",
+        "birth_date": "2022-12-27",
+        **__user_data,
+    }
 
-    __receiver_user_data = {"username": "test_2", **__user_data}
-    __receiver_data = {"passport": "0000-000001", "birth_date": "2022-12-27"}
-
-    queryset = SubscriberCall.objects.all()
+    model = SubscriberCall
     entity_name = "subscribers_calls"
 
     get_all_statuses = (
@@ -54,16 +60,18 @@ class SubscriberCallTestCase(ApiStatusTestCaseWrapper.ApiStatusTestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        caller_user = get_user_model().objects.create(**cls.__caller_user_data)
-        caller = Subscriber.objects.create(**cls.__caller_data, user=caller_user)
+        caller = Subscriber(**cls.__caller_data)
+        caller.set_password(cls.__caller_data["password"])
+        caller.save()
         caller_token = cast(Token, getattr(caller, "auth_token")).key
 
-        receiver_user = get_user_model().objects.create(**cls.__receiver_user_data)
-        receiver = Subscriber.objects.create(**cls.__receiver_data, user=receiver_user)
+        receiver = Subscriber(**cls.__receiver_data)
+        receiver.set_password(cls.__receiver_data["password"])
+        receiver.save()
 
         cls.entity_data = {
-            "caller": caller.id,
-            "receiver": receiver.id,
+            "caller": str(caller.id),
+            "receiver": str(receiver.id),
             "start": "2022-12-27 08:26:49.219717",
             "duration": "1",
         }
@@ -71,10 +79,14 @@ class SubscriberCallTestCase(ApiStatusTestCaseWrapper.ApiStatusTestCase):
         super().setUpClass()
 
         caller_client = test.APIClient()
-        caller_client.login(
-            username=cls.__caller_user_data["username"],
-            password=cls.__caller_user_data["password"],
+        is_login = caller_client.login(
+            username=cls.__caller_data["username"],
+            password=cls.__caller_data["password"],
         )
+
+        if not is_login:
+            raise ValueError("Caller client is not login")
+
         caller_client.credentials(HTTP_AUTHORIZATION=f"Token {caller_token}")
 
         cls.add_to_test_users(caller_client)
