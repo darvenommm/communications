@@ -1,3 +1,5 @@
+"""Registration form module."""
+
 from typing import Any
 
 from django import forms
@@ -7,6 +9,8 @@ from subscribers.models import Subscriber
 
 
 class RegistrationForm(forms.ModelForm):
+    """Registration form."""
+
     password = forms.CharField(
         label=_("Password"),
         strip=False,
@@ -19,6 +23,14 @@ class RegistrationForm(forms.ModelForm):
     )
 
     def clean(self) -> dict[str, Any]:
+        """Validate the given data.
+
+        Raises:
+            ValidationError: Passwords aren't equal.
+
+        Returns:
+            dict[str, Any]: The cleaned data.
+        """
         cleaned_data = super().clean()
 
         password = cleaned_data.get("password")
@@ -26,12 +38,15 @@ class RegistrationForm(forms.ModelForm):
 
         if password and repeated_password and (password != repeated_password):
             raise ValidationError(
-                _("Password and repeated password have to be equal"), code="incorrect_password"
+                _("Password and repeated password have to be equal"),
+                code="incorrect_password",
             )
 
         return cleaned_data
 
     class Meta:
+        """Class Meta."""
+
         model = Subscriber
         fields = (
             "first_name",

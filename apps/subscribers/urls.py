@@ -1,8 +1,9 @@
-from django.urls import path
+"""Subscribers urls."""
+
 from django.contrib.auth.views import LogoutView
+from django.urls import path
 
-from .views import RegistrationView, LogInView
-
+from .views import LogInView, RegistrationView
 
 app_name = "auth"
 

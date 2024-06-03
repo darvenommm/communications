@@ -1,13 +1,13 @@
 import asyncio
-from uuid import uuid4
-from typing import cast, TypedDict, Required, Optional
 import datetime
+from typing import Optional, Required, TypedDict, cast
+from uuid import uuid4
 
+from calls.models import Operator, SubscriberCall
 from django.db import models
 from django.utils import timezone
-
 from subscribers.models import Subscriber
-from calls.models import Operator, SubscriberCall
+
 from library.storages.redis_storage import RedisStorage
 
 

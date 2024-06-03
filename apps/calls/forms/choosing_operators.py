@@ -1,10 +1,12 @@
-from typing import Any
-from django import forms
+"""Choosing operators form module."""
 
 from calls.models import Operator
+from django import forms
 
 
 class ChoosingOperatorsForm(forms.Form):
+    """Choosing operators form."""
+
     operators = forms.ModelMultipleChoiceField(
         queryset=Operator.objects.all(),
         widget=forms.CheckboxSelectMultiple(),
@@ -12,4 +14,6 @@ class ChoosingOperatorsForm(forms.Form):
     )
 
     class Meta:
+        """Class Meta."""
+
         fields = ("operators",)

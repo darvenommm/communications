@@ -1,14 +1,18 @@
+"""Subscriber call test case module."""
+
 from typing import cast
 
-from rest_framework.authtoken.models import Token
-from rest_framework import status, test
-
-from subscribers.models import Subscriber
 from calls.models import SubscriberCall
+from rest_framework import status, test
+from rest_framework.authtoken.models import Token
+from subscribers.models import Subscriber
+
 from library.rest.api_status_test_case import ApiStatusTestCaseWrapper
 
 
 class SubscriberCallTestCase(ApiStatusTestCaseWrapper.ApiStatusTestCase):
+    """Subscriber call test case."""
+
     __user_data = {"first_name": "first_name", "last_name": "last_name", "password": "password"}
 
     __caller_data = {
@@ -60,6 +64,11 @@ class SubscriberCallTestCase(ApiStatusTestCaseWrapper.ApiStatusTestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
+        """Set up class.
+
+        Raises:
+            ValueError: not login.
+        """
         caller = Subscriber(**cls.__caller_data)
         caller.set_password(cls.__caller_data["password"])
         caller.save()

@@ -1,8 +1,7 @@
 from django.contrib import admin
 
-from .models import Operator, SubscriberCall
 from .admin_models import OperatorAdmin, SubscriberCallAdmin
-
+from .models import Operator, SubscriberCall
 
 models_for_registration = ((Operator, OperatorAdmin), (SubscriberCall, SubscriberCallAdmin))
 

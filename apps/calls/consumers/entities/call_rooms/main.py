@@ -2,9 +2,10 @@ import asyncio
 import datetime
 from typing import Any, cast
 
-from .types import ActionType
 from calls.consumers.helpers import AsyncConsumerHelper
 from calls.consumers.storages import CallRoomsStorage, CallRoomType
+
+from .types import ActionType
 
 
 class CallRoomsConsumer(AsyncConsumerHelper):

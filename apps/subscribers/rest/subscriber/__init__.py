@@ -1,2 +1,2 @@
+from .serializers import SubscriberCreateAndUpdateSerializer, SubscriberDefaultSerializer
 from .views import SubscriberViewSet
-from .serializers import SubscriberDefaultSerializer, SubscriberCreateAndUpdateSerializer

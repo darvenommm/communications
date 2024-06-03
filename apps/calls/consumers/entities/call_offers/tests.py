@@ -1,8 +1,9 @@
 import asyncio
-from django.test import TestCase
-from channels.testing import WebsocketCommunicator
 
+from channels.testing import WebsocketCommunicator
+from django.test import TestCase
 from subscribers.models import Subscriber
+
 from .main import CallOffersConsumer
 from .types import ActionType
 

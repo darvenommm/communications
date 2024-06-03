@@ -1,10 +1,14 @@
-from rest_framework import status
+"""Test subscriber."""
 
+from rest_framework import status
 from subscribers.models import Subscriber
+
 from library.rest.api_status_test_case import ApiStatusTestCaseWrapper
 
 
 class SubscriberTestCase(ApiStatusTestCaseWrapper.ApiStatusTestCase):
+    """Subscriber test case."""
+
     model = Subscriber
     entity_name = "subscribers"
     entity_data = {

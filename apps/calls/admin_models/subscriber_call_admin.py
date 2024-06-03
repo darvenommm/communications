@@ -1,11 +1,10 @@
 from typing import Any
 
+from calls.models import SubscriberCall
 from django import forms
 from django.contrib import admin
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
-
-from calls.models import SubscriberCall
 
 
 class SubscriberCallForm(forms.ModelForm):

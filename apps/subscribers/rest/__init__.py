@@ -1,3 +1,3 @@
 from .main import register_rest_routes
-
-from .subscriber import SubscriberDefaultSerializer, SubscriberCreateAndUpdateSerializer
+from .subscriber import (SubscriberCreateAndUpdateSerializer,
+                         SubscriberDefaultSerializer)

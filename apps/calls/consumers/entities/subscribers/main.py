@@ -1,8 +1,9 @@
 from typing import Any
 
-from .types import ActionType
 from calls.consumers.helpers import AsyncConsumerHelper
 from calls.consumers.storages import OnlineSubscribersStorage
+
+from .types import ActionType
 
 
 class SubscriberConsumer(AsyncConsumerHelper):

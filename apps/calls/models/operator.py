@@ -1,15 +1,18 @@
+"""Operator model module."""
+
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from subscribers.models import Subscriber
 
-from library.models.mixins.uuid_mixin import UuidMixin
 from library.models.mixins.created_mixin import CreatedMixin
 from library.models.mixins.updated_mixin import UpdatedMixin
+from library.models.mixins.uuid_mixin import UuidMixin
 from library.models.validators.time_range_validator import TimeRangeValidator
-
-from subscribers.models import Subscriber
 
 
 class Operator(UuidMixin, CreatedMixin, UpdatedMixin, models.Model):
+    """Operator model."""
+
     title_max_length = 100
     description_max_length = 2500
 
@@ -31,9 +34,16 @@ class Operator(UuidMixin, CreatedMixin, UpdatedMixin, models.Model):
     )
 
     def __str__(self) -> str:
+        """Get string presentation.
+
+        Returns:
+            str: string presentation.
+        """
         return self.title
 
     class Meta:
+        """Class Meta."""
+
         db_table = '"communications"."operator"'
         verbose_name = _("operator")
         verbose_name_plural = _("operators")

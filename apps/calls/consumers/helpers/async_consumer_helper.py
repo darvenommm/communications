@@ -1,9 +1,8 @@
-from typing import cast, Optional
+from typing import Optional, cast
 
-from django.contrib.auth.models import AnonymousUser
-from channels.layers import InMemoryChannelLayer
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
-
+from channels.layers import InMemoryChannelLayer
+from django.contrib.auth.models import AnonymousUser
 from subscribers.models import Subscriber
 
 

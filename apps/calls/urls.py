@@ -1,8 +1,9 @@
+"""Call urls."""
+
 from django.urls import path, reverse_lazy
 from django.views.generic import RedirectView, TemplateView
 
-from .views import SubscribersView, CallsHistoryView, ChoosingOperatorsView
-
+from .views import CallsHistoryView, ChoosingOperatorsView, SubscribersView
 
 urlpatterns = [
     path("", RedirectView.as_view(url=reverse_lazy("home"), permanent=True)),

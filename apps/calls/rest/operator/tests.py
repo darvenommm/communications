@@ -1,10 +1,14 @@
-from rest_framework import status
+"""Operator test case module."""
 
 from calls.models import Operator
+from rest_framework import status
+
 from library.rest.api_status_test_case import ApiStatusTestCaseWrapper
 
 
 class OperatorTestCase(ApiStatusTestCaseWrapper.ApiStatusTestCase):
+    """Operator test case."""
+
     model = Operator
     entity_name = "operators"
     entity_data = {

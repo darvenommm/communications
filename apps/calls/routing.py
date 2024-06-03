@@ -1,7 +1,8 @@
+"""Call websocket urls."""
+
 from django.urls import path
 
-from .consumers import SubscriberConsumer, CallOffersConsumer, CallRoomsConsumer
-
+from .consumers import CallOffersConsumer, CallRoomsConsumer, SubscriberConsumer
 
 websocket_urlpatterns = [
     path("subscribers/", SubscriberConsumer.as_asgi()),

@@ -22,6 +22,8 @@ django-redis = "^5.4.0"
 black = "^24.4.0"
 coverage = "^7.5.0"
 mypy = "^1.10.0"
+flake8 = "^7.0.0"
+wemake-python-styleguide = "^0.19.2"
 
 [build-system]
 requires = ["poetry-core"]

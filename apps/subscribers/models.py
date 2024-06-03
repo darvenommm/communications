@@ -1,1 +1,3 @@
-from .models import *
+"""Subscribers models."""
+
+from .models import Subscriber
