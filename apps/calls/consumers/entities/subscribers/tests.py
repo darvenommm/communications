@@ -18,8 +18,8 @@ class MyTests(TestCase):
         subscriber2.set_password("password")
         await subscriber2.asave()
 
-        communicator1 = WebsocketCommunicator(SubscriberConsumer.as_asgi(), f"/subscribers//")
-        communicator2 = WebsocketCommunicator(SubscriberConsumer.as_asgi(), f"/subscribers//")
+        communicator1 = WebsocketCommunicator(SubscriberConsumer.as_asgi(), "/subscribers/")
+        communicator2 = WebsocketCommunicator(SubscriberConsumer.as_asgi(), "/subscribers/")
 
         communicator1.scope["user"] = subscriber1
         communicator2.scope["user"] = subscriber2

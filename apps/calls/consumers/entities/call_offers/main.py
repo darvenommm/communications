@@ -64,7 +64,7 @@ class CallOffersConsumer(AsyncConsumerHelper):
         from_subscriber_id = cast(str, received_content["data"])
         to_subscriber_id = str(to_subscriber.id)
 
-        if self.offers_storage.get(from_subscriber_id) == to_subscriber_id:
+        if self.offers_storage.get_other(from_subscriber_id) == to_subscriber_id:
             self.offers_storage.remove(from_subscriber_id)
             await self.get_channel_layer().group_send(
                 self.create_unique(from_subscriber_id),
@@ -77,7 +77,7 @@ class CallOffersConsumer(AsyncConsumerHelper):
         from_subscriber_id = cast(str, received_content["data"])
         to_subscriber_id = str(to_subscriber.id)
 
-        if self.offers_storage.get(from_subscriber_id) == to_subscriber_id:
+        if self.offers_storage.get_other(from_subscriber_id) == to_subscriber_id:
             self.offers_storage.remove(from_subscriber_id)
 
             call_room_id = await self.rooms_storage.add(from_subscriber_id, to_subscriber_id)
