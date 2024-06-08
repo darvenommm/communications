@@ -1,5 +1,6 @@
+"""Call offers consumer module."""
+
 from typing import Any, cast
-from uuid import uuid4
 
 from calls.consumers.helpers import AsyncConsumerHelper
 from calls.consumers.storages import CallOffersStorage, CallRoomsStorage
@@ -8,11 +9,14 @@ from .types import ActionType
 
 
 class CallOffersConsumer(AsyncConsumerHelper):
+    """Call offers consumer."""
+
     unique_prefix = "call_offers"
     offers_storage = CallOffersStorage()
     rooms_storage = CallRoomsStorage()
 
     async def connect(self) -> None:
+        """Handle subscriber connection."""
         subscriber = self.get_subscriber()
 
         if not subscriber:
@@ -25,6 +29,11 @@ class CallOffersConsumer(AsyncConsumerHelper):
         await self.accept()
 
     async def disconnect(self, _: int) -> None:
+        """Handle subscriber disconnect.
+
+        Args:
+            _: Error code.
+        """
         subscriber = self.get_subscriber()
 
         if not subscriber:
@@ -34,6 +43,11 @@ class CallOffersConsumer(AsyncConsumerHelper):
         await self.get_channel_layer().group_discard(subscriber_group, self.channel_name)
 
     async def receive_json(self, received_content: dict[str, Any]) -> None:
+        """Handle received json.
+
+        Args:
+            received_content: The received content.
+        """
         match received_content.get("type", ""):
             case ActionType.offer_connection:
                 await self.handle_offer_connection(received_content)
@@ -43,6 +57,11 @@ class CallOffersConsumer(AsyncConsumerHelper):
                 await self.handle_offer_success(received_content)
 
     async def handle_offer_connection(self, received_content: dict[str, str]) -> None:
+        """Handle offer connection.
+
+        Args:
+            received_content: The received content.
+        """
         from_subscriber = self.subscriber
 
         from_subscriber_id = str(from_subscriber.id)
@@ -59,6 +78,11 @@ class CallOffersConsumer(AsyncConsumerHelper):
         )
 
     async def handle_offer_cancel(self, received_content: dict[str, str]) -> None:
+        """Handle offer cancel.
+
+        Args:
+            received_content: The received content.
+        """
         to_subscriber = self.subscriber
 
         from_subscriber_id = cast(str, received_content["data"])
@@ -72,6 +96,11 @@ class CallOffersConsumer(AsyncConsumerHelper):
             )
 
     async def handle_offer_success(self, received_content: dict[str, Any]) -> None:
+        """Handle offer success.
+
+        Args:
+            received_content: The received content.
+        """
         to_subscriber = self.subscriber
 
         from_subscriber_id = cast(str, received_content["data"])
@@ -88,10 +117,25 @@ class CallOffersConsumer(AsyncConsumerHelper):
                 )
 
     async def offer_connection(self, event: dict[str, str]) -> None:
+        """Event a subscriber about offer connection.
+
+        Args:
+            event: Event data with to subscriber id in data.
+        """
         await self.send_json({"type": ActionType.offer_connection, "data": event["data"]})
 
     async def offer_cancel(self, _: dict[str, str]) -> None:
+        """Event a subscriber about offer cancel.
+
+        Args:
+            _: Event data.
+        """
         await self.send_json({"type": ActionType.offer_cancel})
 
     async def offer_success(self, event: dict[str, str]) -> None:
+        """Event a subscriber about offer success.
+
+        Args:
+            event: Event data with from subscriber id in data.
+        """
         await self.send_json({"type": ActionType.offer_success, "data": event["data"]})

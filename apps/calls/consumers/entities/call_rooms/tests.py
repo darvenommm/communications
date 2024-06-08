@@ -1,3 +1,5 @@
+"""Call rooms consumer test case module."""
+
 import asyncio
 
 from calls.consumers.storages.call_rooms import CallRoomsStorage
@@ -9,9 +11,11 @@ from .main import CallRoomsConsumer
 from .types import ActionType
 
 
-class MyTests(TestCase):
-    async def test_success(self):
+class CallRoomsConsumerTestCase(TestCase):
+    """Call rooms consumer test case."""
 
+    async def test_success(self):
+        """Test success consumer connection."""
         subscriber1 = Subscriber(username="test", first_name="name", last_name="surname")
         subscriber1.set_password("password")
         await subscriber1.asave()
@@ -23,10 +27,10 @@ class MyTests(TestCase):
         room_id = await CallRoomsStorage().add(str(subscriber1.id), str(subscriber2.id))
 
         communicator1 = WebsocketCommunicator(
-            CallRoomsConsumer.as_asgi(), f"/call-rooms/{room_id}/"
+            CallRoomsConsumer.as_asgi(), f"/call-rooms/{room_id}/",
         )
         communicator2 = WebsocketCommunicator(
-            CallRoomsConsumer.as_asgi(), f"/call-rooms/{room_id}/"
+            CallRoomsConsumer.as_asgi(), f"/call-rooms/{room_id}/",
         )
 
         communicator1.scope["user"] = subscriber1

@@ -1,3 +1,5 @@
+"""Register calls admins model."""
+
 from django.contrib import admin
 
 from .admin_models import OperatorAdmin, SubscriberCallAdmin

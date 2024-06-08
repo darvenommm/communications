@@ -1,3 +1,5 @@
+"""Subscriber call admin model module."""
+
 from typing import Any
 
 from calls.models import SubscriberCall
@@ -8,7 +10,17 @@ from django.utils.translation import gettext_lazy as _
 
 
 class SubscriberCallForm(forms.ModelForm):
+    """Subscriber call form."""
+
     def clean(self) -> dict[str, Any]:
+        """Check correct form data.
+
+        Raises:
+            ValidationError: Incorrect data. Caller and receive are equal.
+
+        Returns:
+            dict[str, Any]: Cleaned data.
+        """
         cleaned_data = super().clean()
 
         if cleaned_data.get("caller") == cleaned_data.get("receiver"):
@@ -20,11 +32,15 @@ class SubscriberCallForm(forms.ModelForm):
         return cleaned_data
 
     class Meta:
+        """Class Meta."""
+
         model = SubscriberCall
         fields = ("caller", "receiver", "start", "duration")
 
 
 class SubscriberCallAdmin(admin.ModelAdmin):
+    """Subscriber call admin."""
+
     form = SubscriberCallForm
 
     search_fields = (

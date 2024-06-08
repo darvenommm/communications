@@ -24,6 +24,7 @@ coverage = "^7.5.0"
 mypy = "^1.10.0"
 flake8 = "^7.0.0"
 wemake-python-styleguide = "^0.19.2"
+django-stubs = {extras = ["compatible-mypy"], version = "^5.0.2"}
 
 [build-system]
 requires = ["poetry-core"]
@@ -32,3 +33,9 @@ build-backend = "poetry.core.masonry.api"
 [tool.black]
 target-version = ["py312"]
 line-length = 100
+
+[tool.mypy]
+plugins = ["mypy_django_plugin.main"]
+
+[tool.django-stubs]
+django_settings_module = "myproject.settings"

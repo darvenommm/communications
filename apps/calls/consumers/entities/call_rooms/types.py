@@ -1,7 +1,11 @@
+"""Call room action types module."""
+
 from enum import StrEnum
 
 
 class ActionType(StrEnum):
+    """Call room action types."""
+
     offer = "offer"
     answer = "answer"
     final = "final"

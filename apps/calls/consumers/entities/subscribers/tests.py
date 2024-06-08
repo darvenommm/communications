@@ -1,3 +1,4 @@
+"""Subscriber consumer test case."""
 import asyncio
 
 from channels.testing import WebsocketCommunicator
@@ -8,8 +9,11 @@ from .main import SubscriberConsumer
 from .types import ActionType
 
 
-class MyTests(TestCase):
+class SubscriberConsumerTestCase(TestCase):
+    """Subscriber consumer test case."""
+
     async def test_success(self):
+        """Test success connection."""
         subscriber1 = Subscriber(username="test", first_name="name", last_name="surname")
         subscriber1.set_password("password")
         await subscriber1.asave()

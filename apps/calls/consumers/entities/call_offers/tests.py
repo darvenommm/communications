@@ -1,3 +1,5 @@
+"""Call offers consumer test case."""
+
 import asyncio
 
 from channels.testing import WebsocketCommunicator
@@ -8,8 +10,11 @@ from .main import CallOffersConsumer
 from .types import ActionType
 
 
-class MyTests(TestCase):
+class CallOffersConsumerTestCase(TestCase):
+    """Call offer consumer test case."""
+
     async def test_success(self):
+        """Test success."""
         communicator1 = WebsocketCommunicator(CallOffersConsumer.as_asgi(), "/call-offers/")
         communicator2 = WebsocketCommunicator(CallOffersConsumer.as_asgi(), "/call-offers/")
 
@@ -34,18 +39,19 @@ class MyTests(TestCase):
         assert connected1 and connected2
 
         await communicator1.send_json_to(
-            {"type": ActionType.offer_connection, "data": str(subscriber2.id)}
+            {"type": ActionType.offer_connection, "data": str(subscriber2.id)},
         )
 
         await communicator2.receive_json_from()
         await communicator2.send_json_to(
-            {"type": ActionType.offer_success, "data": str(subscriber1.id)}
+            {"type": ActionType.offer_success, "data": str(subscriber1.id)},
         )
 
         await communicator1.disconnect()
         await communicator2.disconnect()
 
     async def test_cancel(self) -> None:
+        """Test cancel."""
         communicator1 = WebsocketCommunicator(CallOffersConsumer.as_asgi(), "/call-offers/")
         communicator2 = WebsocketCommunicator(CallOffersConsumer.as_asgi(), "/call-offers/")
 
@@ -70,12 +76,12 @@ class MyTests(TestCase):
         assert connected1 and connected2
 
         await communicator1.send_json_to(
-            {"type": ActionType.offer_connection, "data": str(subscriber2.id)}
+            {"type": ActionType.offer_connection, "data": str(subscriber2.id)},
         )
 
         await communicator2.receive_json_from()
         await communicator2.send_json_to(
-            {"type": ActionType.offer_cancel, "data": str(subscriber1.id)}
+            {"type": ActionType.offer_cancel, "data": str(subscriber1.id)},
         )
 
         await communicator1.disconnect()
