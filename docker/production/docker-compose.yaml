@@ -10,12 +10,18 @@ services:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
     healthcheck:
-      test: pg_isready -d ${DB_NAME} -h database -U ${DB_USER}
+      test: pg_isready -U ${DB_USER} -d ${DB_NAME} -h database
       interval: 2s
       timeout: 3s
       retries: 120
     networks:
-      - net
+      - database-network
+
+  redis:
+    container_name: commmunications-production-redis
+    image: redis
+    networks:
+      - redis-network
 
   server:
     container_name: communications-production-server
@@ -33,7 +39,9 @@ services:
     ports:
       - ${SERVER_PORT}:${SERVER_PORT}
     networks:
-      - net
+      - database-network
+      - redis-network
 
 networks:
-  net:
+  database-network:
+  redis-network:

@@ -1,13 +1,11 @@
 """Django settings module."""
 
 import sys
-from os import getenv
 from pathlib import Path
 
 from django.utils.translation import gettext_lazy as _
-from dotenv import load_dotenv
 
-load_dotenv()
+from .environment_variable import Envs
 
 # add the apps directory to python paths
 apps_path = Path(__file__).parent.parent.resolve() / "apps"
@@ -21,20 +19,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-)+&c!1l#ftfs@j=8dqe1@fy^r1r-h0=qdc9!g))u5s(*ai)+0b"
+SECRET_KEY = Envs.SECRET_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
-IS_PRODUCTION = getenv("IS_PRODUCTION", default=False)
-IS_DEVELOPMENT = not IS_PRODUCTION
+DEBUG = Envs.IS_DEVELOPMENT
 
-DEBUG = IS_DEVELOPMENT
-
-
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 # Application definition
-
 INSTALLED_APPS = [
     "daphne",
     "subscribers",
@@ -79,15 +71,13 @@ TEMPLATES = [
 ]
 
 
-REDIS_PORT = int(getenv("REDIS_PORT", 6379))
-
 WSGI_APPLICATION = "communications.wsgi.application"
 ASGI_APPLICATION = "communications.asgi.application"
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("127.0.0.1", REDIS_PORT)],
+            "hosts": [(Envs.REDIS_PORT, int(Envs.REDIS_PORT))],
         },
     },
 }
@@ -95,7 +85,7 @@ CHANNEL_LAYERS = {
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": f"redis://127.0.0.1:{REDIS_PORT}/",
+        "LOCATION": f"redis://{Envs.REDIS_HOST}:{Envs.REDIS_PORT}/",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "COMPRESSOR": "django_redis.compressors.zlib.ZlibCompressor",
@@ -105,20 +95,14 @@ CACHES = {
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-
-DB_PASSWORD = getenv("DB_PASSWORD")
-
-if not DB_PASSWORD:
-    raise ValueError("Not defined DB_PASSWORD in .env file!")
-
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": getenv("DB_NAME", "communications"),
-        "USER": getenv("DB_USER", "postgres"),
-        "PASSWORD": DB_PASSWORD,
-        "HOST": getenv("DB_HOST", "127.0.0.1"),
-        "PORT": int(5432 if IS_PRODUCTION else getenv("DB_PORT", 5432)),
+        "NAME": Envs.DB_NAME,
+        "USER": Envs.DB_USER,
+        "PASSWORD": Envs.DB_PASSWORD,
+        "HOST": Envs.DB_HOST,
+        "PORT": int(Envs.DB_PORT),
         "OPTIONS": {
             "options": "-c search_path=communications,public",
         },
@@ -187,7 +171,7 @@ REST_FRAMEWORK = {
 
 REST_FRAMEWORK_API_PATH = "api/"
 
-if IS_DEVELOPMENT:
+if Envs.IS_DEVELOPMENT:
     REST_FRAMEWORK.get("DEFAULT_RENDERER_CLASSES", []).append(
         "rest_framework.renderers.BrowsableAPIRenderer",
     )

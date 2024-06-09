@@ -16,7 +16,7 @@ ENV DB_HOST=${DB_HOST}
 ARG REDIS_HOST
 ENV REDIS_HOST=${REDIS_HOST}
 
-ENV IS_PRODUCTION='true'
+ENV MODE='production'
 
 CMD /bin/bash -c " \
     poetry run python manage.py migrate; \

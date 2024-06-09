@@ -4,13 +4,12 @@ services:
     image: postgres:16.2
     restart: always
     shm_size: 256mb
-    env_file: .env
     environment:
       - POSTGRES_DB=${DB_NAME}
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
     healthcheck:
-      test: pg_isready -d ${DB_NAME} -h database -U ${DB_USER}
+      test: pg_isready -U ${DB_USER} -d ${DB_NAME} -h database
       interval: 2s
       timeout: 3s
       retries: 120
@@ -23,10 +22,9 @@ services:
     container_name: commmunications-development-redis
     image: redis
     ports:
-      - 6380:6379
+      - ${REDIS_PORT}:6379
     networks:
       - redis-network
-
 
 networks:
   database-network:

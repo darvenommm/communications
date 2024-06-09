@@ -1,15 +1,19 @@
 ### Env file
 
-- DB_NAME=<change_me>
-- DB_USER=<change_me>
-- DB_PASSWORD=<change_me>
-- DB_HOST=<change_me>
-- REDIS_PORT=<change_me>
-- SERVER_PORT=<change_me>
-- DJANGO_SUPERUSER_PASSWORD=<change_me>
-- DJANGO_SUPERUSER_USERNAME=<change_me>
+## Required for all modes
 
+SECRET_KEY=<django-password-for-securing>
+DB_NAME=<db-name>
+DB_USER=<db-username>
+DB_PASSWORD=<db-password>
 
-**The last two variables are used in the production mode**!
+## Required for the development mode
 
-Also need certificates mkcert
+DB_PORT=<db-port>
+REDIS_PORT=<redis-port>
+
+## Required for the production mode
+
+SERVER_PORT=<server-port>
+DJANGO_SUPERUSER_USERNAME=<django-superuser-username>
+DJANGO_SUPERUSER_PASSWORD=<django-superuser-password>

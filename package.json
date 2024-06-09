@@ -4,8 +4,7 @@
   "description": "The developments tools for this django project",
   "scripts": {
     "compile-ts:dev": "nodemon --exec \"cross-env MODE=development webpack build --config ./webpack/webpack.config.ts\" -e ts, -w",
-    "compile-ts:prod": "cross-env MODE=production webpack build --config ./webpack/webpack.config.ts",
-    "compile-scss:dev": "sass ./apps/calls/assets/styles/styles.scss:./apps/calls/static/calls/styles/styles.css --watch"
+    "compile-ts:prod": "cross-env MODE=production webpack build --config ./webpack/webpack.config.ts"
   },
   "keywords": [],
   "author": "Romodanov Denis (@darvenommm)",
