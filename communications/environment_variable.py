@@ -1,6 +1,9 @@
-from uuid import uuid4
-from dotenv import load_dotenv
+"""Environment variables."""
+
 from os import getenv
+from uuid import uuid4
+
+from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -12,6 +15,8 @@ DEFAULT_DB_PORT = '5432'
 
 
 class Envs:
+    """Envs."""
+
     IS_DEVELOPMENT = MODE == 'development'
     IS_PRODUCTION = MODE == 'production'
     SECRET_KEY = getenv('SECRET_KEY', EMPTY_VALUE)
@@ -26,6 +31,6 @@ class Envs:
     DB_PORT = getenv('DB_PORT', DEFAULT_DB_PORT) if IS_DEVELOPMENT else DEFAULT_DB_PORT
 
 
-for property in dir(Envs):
-    if getattr(Envs, property) == EMPTY_VALUE:
-        raise ValueError(f'Not defined {property} in .env file!')
+for evns_property in dir(Envs):
+    if getattr(Envs, evns_property) == EMPTY_VALUE:
+        raise ValueError(f'Not defined {evns_property} in .env file!')

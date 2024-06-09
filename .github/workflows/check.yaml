@@ -1,0 +1,46 @@
+name: Check
+on: push
+jobs:
+  linter:
+    name: Linter
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.12.2
+      - name: Install linter dependencies
+        run: pip install flake8==7.0.0 wemake-python-styleguide==0.19.2
+      - name: Run flake
+        run: flake8
+
+  tests:
+    name: Tests
+    runs-on: ubuntu-latest
+    environment: github_actions_env
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Make .env file
+        uses: SpicyPizza/create-envfile@v2.0
+        with:
+          envkey_SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          envkey_DB_NAME: ${{ vars.DB_NAME }}
+          envkey_DB_USER: ${{ vars.DB_USER }}
+          envkey_DB_PASSWORD: ${{ vars.DB_PASSWORD }}
+          envkey_REDIS_PORT: ${{ vars.REDIS_PORT }}
+          envkey_DB_PORT: ${{ vars.DB_PORT }}
+      - name: Run server
+        run: ./commands/development/run-docker.sh
+      - name: Install python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.12.2
+      - name: Install python packages
+        run: |
+          pip install poetry
+          poetry install --without=dev
+      - name: Run test
+        run: poetry run python manage.py test apps
