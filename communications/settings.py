@@ -77,7 +77,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [(Envs.REDIS_PORT, int(Envs.REDIS_PORT))],
+            "hosts": [(Envs.REDIS_HOST, int(Envs.REDIS_PORT))],
         },
     },
 }
@@ -85,7 +85,7 @@ CHANNEL_LAYERS = {
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": f"redis://{Envs.REDIS_HOST}:{Envs.REDIS_PORT}/",
+        "LOCATION": f"redis://{Envs.REDIS_HOST}:{int(Envs.REDIS_PORT)}/",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "COMPRESSOR": "django_redis.compressors.zlib.ZlibCompressor",
@@ -150,6 +150,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / 'static'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

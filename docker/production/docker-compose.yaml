@@ -18,7 +18,7 @@ services:
       - database-network
 
   redis:
-    container_name: commmunications-production-redis
+    container_name: communications-production-redis
     image: redis
     networks:
       - redis-network
@@ -27,11 +27,11 @@ services:
     container_name: communications-production-server
     build:
       context: ./
-      dockerfile: ./docker/run-server-production-dockerfile
+      dockerfile: ./docker/production/Dockerfile
       args:
         - DB_HOST=database
         - REDIS_HOST=redis
-    command: command
+        - SERVER_PORT=${SERVER_PORT}
     env_file: .env
     depends_on:
       database:

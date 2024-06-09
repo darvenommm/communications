@@ -23,5 +23,5 @@ CMD /bin/bash -c " \
     poetry run python manage.py createsuperuser \
     --username ${DJANGO_SUPERUSER_USERNAME} \
     --no-input || true; \
-    poetry run python manage.py runserver; \
+    poetry run python manage.py runserver 0.0.0.0:${SERVER_PORT}; \
 "

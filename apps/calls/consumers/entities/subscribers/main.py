@@ -28,11 +28,11 @@ class SubscriberConsumer(AsyncConsumerHelper):
         subscriber_id = str(subscriber.id)
         self.online_subscribers_storage.add(subscriber_id)
 
+        await self.get_channel_layer().group_add(self.online_subscribers_group, self.channel_name)
         await self.get_channel_layer().group_send(
             self.online_subscribers_group,
             {"type": ActionType.subscriber_invite, "data": subscriber_id},
         )
-        await self.get_channel_layer().group_add(self.online_subscribers_group, self.channel_name)
         await self.accept()
 
         await self.send_json(

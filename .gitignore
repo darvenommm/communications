@@ -2,6 +2,8 @@
 # Created by https://www.toptal.com/developers/gitignore/api/webstorm+iml,webstorm+all,webstorm,visualstudiocode,virtualenv,venv,text,pythonvanilla,python,node,linux,dotenv,django,database,backup,certificates
 # Edit at https://www.toptal.com/developers/gitignore?templates=webstorm+iml,webstorm+all,webstorm,visualstudiocode,virtualenv,venv,text,pythonvanilla,python,node,linux,dotenv,django,database,backup,certificates
 
+static/
+
 ### Backup ###
 *.bak
 *.gho

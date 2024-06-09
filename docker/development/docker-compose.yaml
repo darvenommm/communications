@@ -19,7 +19,7 @@ services:
       - database-network
 
   redis:
-    container_name: commmunications-development-redis
+    container_name: communications-development-redis
     image: redis
     ports:
       - ${REDIS_PORT}:6379
