@@ -54,9 +54,11 @@ class Subscriber(UuidMixin, AbstractUser):
         """Get full name.
 
         Returns:
-            str: full name.
+            str: cleaned full name.
         """
-        return self.get_full_name()
+        cleaned_full_name = cast(str, self.get_full_name()).strip()
+
+        return cleaned_full_name if cleaned_full_name else str(_("admin"))
 
     def __str__(self) -> str:
         """Get string presentation.
@@ -64,10 +66,7 @@ class Subscriber(UuidMixin, AbstractUser):
         Returns:
             str: string presentation.
         """
-        full_name = cast(str, self.full_name).strip()
-
-        # By default in the db has one user with empty first and last name, it's a admin 99.9%
-        return self.full_name if full_name else _("admin")
+        return self.full_name
 
     class Meta:
         """Class Meta."""
