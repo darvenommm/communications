@@ -4,6 +4,7 @@ from django.forms import ModelForm
 from django.http.response import HttpResponse
 from django.urls import reverse_lazy
 from django.views.generic import FormView
+from django.contrib.auth import login
 from subscribers.forms import RegistrationForm
 from subscribers.models import Subscriber
 
@@ -31,5 +32,7 @@ class RegistrationView(FormView):
         new_user.set_password(password)
 
         new_user.save()
+
+        login(self.request, new_user)
 
         return super().form_valid(form)
