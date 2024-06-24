@@ -11,6 +11,7 @@
   {% if user.is_authenticated %}
   {% if subscribers %}
   <ul class="subscribers__list">
+  {% if subscribers|length > 1 %}
   {% for subscriber in subscribers %}
   {% with current_user=subscriber operators=subscriber.operators.all %}
   {% if user.id != current_user.id %}
@@ -39,6 +40,9 @@
   {% endif %}
   {% endwith %}
   {% endfor %}
+  {% else %}
+  <p>There aren't users</p>
+  {% endif %}
   </ul>
   {% else %}
   <p class="subscribers__no-subscribers">Don't exist any subscribers</p>

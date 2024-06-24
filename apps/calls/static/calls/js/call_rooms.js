@@ -84,7 +84,6 @@ const CONSTRAINTS = {
     video: {
         width: { min: 300, ideal: 500, max: 500 },
         height: { min: 300, ideal: 500, max: 500 },
-        facingMode: 'user',
     },
 };
 const getLocalMediaStream = () => __awaiter(void 0, void 0, void 0, function* () {
